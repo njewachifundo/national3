@@ -1,21 +1,20 @@
 import { useEffect, useState } from 'react'
-import { Link, Route, Routes, useLocation } from 'react-router-dom'
 import {
   Apple,
   ArrowRight,
   Building2,
   Calendar,
   CheckCircle,
-  ChevronDown,
   ChevronRight,
   Clock,
   Download,
+  FileText,
+  Globe,
   Headphones,
   LayoutDashboard,
   Lock,
   Mail,
   MapPin,
-  Menu,
   Percent,
   Phone,
   RefreshCw,
@@ -24,7 +23,6 @@ import {
   Smartphone,
   Users,
   Wallet,
-  X,
   Zap,
 } from 'lucide-react'
 
@@ -41,19 +39,6 @@ const exchangeRates: Record<string, ExchangeRate> = {
   ZAR: { buying: 68.5, selling: 70.25, change: '+0.8%' },
   CAD: { buying: 945.6, selling: 960.25, change: '+0.1%' },
 }
-
-const navItems = [
-  'Home',
-  'Open Account',
-  'Retail',
-  "SME's",
-  'Corporate',
-  'e-Services',
-  'Rates & Tariffs',
-  'Forms',
-  'Publications',
-  'Media',
-]
 
 const bankingPillars = [
   {
@@ -131,18 +116,117 @@ const standoutFeatures = [
   },
 ]
 
+// Navigation tabs as specified
+const navTabs = [
+  'Retail',
+  "SME's",
+  'Corporate',
+  'e-Services',
+  'Rates & Tariffs',
+  'Forms',
+  'Publications',
+  'Media',
+]
+
+// Publications data - official documents and reports
+const publicationsData = [
+  {
+    title: 'Annual Report 2025',
+    date: 'March 2026',
+    category: 'Annual Report',
+    size: '4.2 MB',
+    icon: FileText,
+    description: 'Comprehensive overview of NBM plc financial performance and strategic achievements in 2025.',
+  },
+  {
+    title: 'Sustainability Report 2025',
+    date: 'February 2026',
+    category: 'Sustainability',
+    size: '3.8 MB',
+    icon: FileText,
+    description: 'Environmental, Social and Governance (ESG) initiatives and community impact.',
+  },
+  {
+    title: 'Q1 2026 Financial Statement',
+    date: 'April 2026',
+    category: 'Financial',
+    size: '1.5 MB',
+    icon: FileText,
+    description: 'Unaudited financial results for the first quarter ending March 31, 2026.',
+  },
+  {
+    title: 'Corporate Governance Charter',
+    date: 'January 2026',
+    category: 'Governance',
+    size: '2.1 MB',
+    icon: FileText,
+    description: 'Board governance framework and principles of the Bank.',
+  },
+  {
+    title: 'NBM Tariff Guide 2026',
+    date: 'January 2026',
+    category: 'Rates',
+    size: '1.2 MB',
+    icon: FileText,
+    description: 'Complete schedule of fees and charges for all banking services.',
+  },
+  {
+    title: 'Customer Service Charter',
+    date: 'December 2025',
+    category: 'Service',
+    size: '0.9 MB',
+    icon: FileText,
+    description: 'Commitment to service excellence and customer rights.',
+  },
+  {
+    title: 'Digital Banking User Manual',
+    date: 'November 2025',
+    category: 'Guides',
+    size: '5.3 MB',
+    icon: FileText,
+    description: 'Step-by-step guide to Mo626 Digital+ and BankNet360.',
+  },
+  {
+    title: 'Financial Inclusion Report',
+    date: 'October 2025',
+    category: 'Research',
+    size: '2.7 MB',
+    icon: FileText,
+    description: 'Impact assessment of banking access initiatives across Malawi.',
+  },
+]
+
+// BankNet360 Features from official website 
+const banknetFeatures = [
+  'Access your accounts 24/7 from anywhere in the world',
+  'Self-service platform for all basic account transactions',
+  'Inter-account and third party payments',
+  'Pay utility bills online anytime',
+  'Establish Fixed Deposit contracts online',
+  'Order cheque books and add beneficiaries',
+  'Effect stop payment on cheques',
+  'Export data to Excel and print statements',
+]
+
 function LogoMark({ size = 'md' }: { size?: 'sm' | 'md' }) {
   const [logoFailed, setLogoFailed] = useState(false)
-  const logoSize = size === 'sm' ? 'h-10 w-32' : 'h-12 w-40'
+  const boxSize =
+    size === 'sm'
+      ? 'h-10 w-28 sm:h-11 sm:w-32'
+      : 'h-11 w-32 sm:h-12 sm:w-40'
   return (
-    <div className="flex shrink-0 items-center justify-center rounded-xl bg-nbm-blue-dark px-2 py-1 shadow-md ring-1 ring-white/25">
+    <div
+      className={`shrink-0 overflow-hidden rounded-xl bg-nbm-blue-dark shadow-md ring-1 ring-white/25 ${boxSize}`}
+    >
       {logoFailed ? (
-        <span className="text-sm font-extrabold tracking-wide text-white">NBM</span>
+        <div className="flex h-full w-full items-center justify-center">
+          <span className="text-sm font-extrabold tracking-wide text-white">NBM</span>
+        </div>
       ) : (
         <img
           src="/real/nbm-logo.png"
           alt="National Bank of Malawi logo"
-          className={`${logoSize} object-contain drop-shadow-[0_1px_2px_rgba(0,0,0,0.45)]`}
+          className="h-full w-full object-contain p-1 drop-shadow-[0_1px_2px_rgba(0,0,0,0.45)]"
           decoding="async"
           onError={() => setLogoFailed(true)}
         />
@@ -151,12 +235,10 @@ function LogoMark({ size = 'md' }: { size?: 'sm' | 'md' }) {
   )
 }
 
-function HomePage() {
-  const [isMenuOpen, setIsMenuOpen] = useState(false)
+export default function App() {
   const [scrolled, setScrolled] = useState(false)
   const [newsImageTick, setNewsImageTick] = useState(0)
   const [autoRotateNews, setAutoRotateNews] = useState(true)
-  const location = useLocation()
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 20)
@@ -166,9 +248,11 @@ function HomePage() {
 
   useEffect(() => {
     if (!autoRotateNews) return
+
     const interval = window.setInterval(() => {
       setNewsImageTick((value) => (value + 1) % newsImages.length)
     }, 3000)
+
     return () => window.clearInterval(interval)
   }, [autoRotateNews])
 
@@ -185,6 +269,7 @@ function HomePage() {
       >
         Skip to main content
       </a>
+
       <header className="fixed z-50 w-full">
         {/* Top utility bar */}
         <div className="hidden bg-nbm-blue-dark text-white lg:block">
@@ -211,698 +296,705 @@ function HomePage() {
           </div>
         </div>
 
-        {/* Navigation */}
+        {/* Navigation - Logo and tabs horizontally */}
         <nav
           aria-label="Primary navigation"
           className={`w-full transition-all duration-300 ${
             scrolled
-              ? 'border-b border-gray-100 bg-white/95 py-3 shadow-lg backdrop-blur-md'
-              : 'bg-white py-4 shadow-sm'
+              ? 'border-b border-gray-100 bg-white/95 py-2 shadow-lg backdrop-blur-md'
+              : 'bg-white py-3 shadow-sm'
           }`}
         >
-        <div className="container mx-auto flex items-center justify-between px-4 sm:px-6">
-          <Link to="/" className="flex items-center gap-3 no-underline" aria-label="National Bank of Malawi home">
-            <LogoMark />
-            <div className="hidden sm:block">
-              <span className="text-base font-bold leading-tight text-gray-900">
-                National Bank
-              </span>
-              <span className="block text-xs font-medium text-nbm-blue">
-                of Malawi plc · The bank of the Nation
-              </span>
-            </div>
-          </Link>
-
-          <div className="hidden items-center gap-5 xl:flex">
-            <Link
-              to="/"
-              className={`text-sm font-medium transition ${
-                location.pathname === '/'
-                  ? 'text-nbm-blue'
-                  : 'text-gray-600 hover:text-nbm-blue'
-              }`}
-            >
-              Home
-            </Link>
-            <Link
-              to="/open-account"
-              className={`text-sm font-medium transition ${
-                location.pathname === '/open-account'
-                  ? 'text-nbm-blue'
-                  : 'text-gray-600 hover:text-nbm-blue'
-              }`}
-            >
-              Open Account
-            </Link>
-            {navItems.slice(2, 6).map((item) => (
-              <a
-                key={item}
-                href="#"
-                className="text-sm font-medium text-gray-600 transition hover:text-nbm-blue"
-              >
-                {item}
+          <div className="container mx-auto px-4 sm:px-6">
+            {/* First row: Logo and Internet Banking CTA */}
+            <div className="flex items-center justify-between">
+              <a href="#" className="flex items-center gap-3 no-underline" aria-label="National Bank of Malawi home">
+                <LogoMark size="sm" />
+                <div className="hidden sm:block">
+                  <span className="text-base font-bold leading-tight text-gray-900">
+                    National Bank
+                  </span>
+                  <span className="block text-xs font-medium text-nbm-blue">
+                    of Malawi plc · The bank of the Nation
+                  </span>
+                </div>
               </a>
-            ))}
-            <div className="group relative">
-              <button
-                type="button"
-                className="flex items-center gap-1 text-sm font-medium text-gray-600 transition hover:text-nbm-blue"
-              >
-                More <ChevronDown className="h-3.5 w-3.5" />
-              </button>
-              <div className="invisible absolute right-0 top-full z-50 mt-1 w-52 rounded-xl border border-gray-100 bg-white py-1 opacity-0 shadow-xl transition-all group-hover:visible group-hover:opacity-100">
-                {navItems.slice(6).map((item) => (
-                  <a
-                    key={item}
-                    href="#"
-                    className="block px-4 py-2.5 text-sm text-gray-600 transition hover:bg-nbm-blue-50 hover:text-nbm-blue"
-                  >
-                    {item}
-                  </a>
-                ))}
-              </div>
-            </div>
-            <a
-              href="#login"
-              className="flex items-center gap-2 rounded-full bg-nbm-blue px-5 py-2.5 text-sm font-semibold text-white shadow-md transition hover:bg-nbm-blue-light hover:shadow-lg no-underline"
-            >
-              <LayoutDashboard className="h-4 w-4" />
-              Internet Banking
-            </a>
-          </div>
-
-          <button
-            type="button"
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
-            className="rounded-lg p-2 text-gray-700 xl:hidden"
-            aria-label="Toggle menu"
-          >
-            {isMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
-          </button>
-        </div>
-
-        {isMenuOpen && (
-          <div className="absolute left-0 top-full max-h-[80vh] w-full overflow-y-auto border-t border-gray-100 bg-white px-6 py-4 shadow-xl xl:hidden">
-            <Link
-              to="/"
-              className="block border-b border-gray-50 py-3 text-gray-700 transition hover:text-nbm-blue"
-              onClick={() => setIsMenuOpen(false)}
-            >
-              Home
-            </Link>
-            <Link
-              to="/open-account"
-              className="block border-b border-gray-50 py-3 text-gray-700 transition hover:text-nbm-blue"
-              onClick={() => setIsMenuOpen(false)}
-            >
-              Open Account
-            </Link>
-            {navItems.slice(2).map((item) => (
               <a
-                key={item}
-                href="#"
-                className="block border-b border-gray-50 py-3 text-gray-700 transition hover:text-nbm-blue"
-                onClick={() => setIsMenuOpen(false)}
+                href="#login"
+                className="flex items-center gap-2 rounded-full bg-nbm-blue px-5 py-2 text-sm font-semibold text-white shadow-md transition hover:bg-nbm-blue-light"
               >
-                {item}
+                <LayoutDashboard className="h-4 w-4" />
+                Internet Banking
               </a>
-            ))}
-            <a
-              href="#login"
-              className="mt-4 flex items-center justify-center gap-2 rounded-full bg-nbm-blue py-3 text-sm font-semibold text-white no-underline"
-            >
-              <LayoutDashboard className="h-4 w-4" />
-              Internet Banking
-            </a>
+            </div>
+
+            {/* Second row: Horizontal navigation tabs */}
+            <div className="mt-3 flex flex-wrap items-center gap-x-5 gap-y-2 border-t border-gray-100 pt-3">
+              {navTabs.map((tab) => (
+                <a
+                  key={tab}
+                  href={
+                    tab === 'Rates & Tariffs' ? '#rates' : 
+                    tab === 'Forms' ? '#forms' : 
+                    tab === 'Publications' ? '#publications' : 
+                    tab === 'Media' ? '#news' : 
+                    '#retail'
+                  }
+                  className="whitespace-nowrap text-sm font-semibold text-gray-700 transition hover:text-nbm-blue"
+                >
+                  {tab}
+                </a>
+              ))}
+            </div>
           </div>
-        )}
         </nav>
       </header>
 
       <main id="main-content">
-      {/* Hero */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-nbm-blue-50 via-white to-white px-4 pb-20 pt-28 sm:px-6 lg:pb-24 lg:pt-40">
-        <div
-          className="pointer-events-none absolute -right-32 -top-32 h-96 w-96 rounded-full bg-nbm-blue/5 blur-3xl"
-          aria-hidden
-        />
-        <div
-          className="pointer-events-none absolute -bottom-20 -left-20 h-72 w-72 rounded-full bg-nbm-blue-accent/10 blur-3xl"
-          aria-hidden
-        />
-        <div className="container relative mx-auto">
-          <div className="flex flex-col items-center justify-between gap-12 lg:flex-row">
-            <div className="space-y-6 lg:w-[52%]">
-              <div className="inline-flex items-center gap-2 rounded-full border border-nbm-blue/20 bg-white px-4 py-2 text-sm font-medium text-nbm-blue shadow-sm">
-                <Zap className="h-4 w-4 text-nbm-blue-accent" />
-                Welcome to the Future of Banking in Malawi
-              </div>
-              <h1 className="text-4xl font-extrabold leading-[1.1] tracking-tight text-gray-900 lg:text-5xl xl:text-6xl">
-                Banking that
-                <span className="mt-1 block bg-gradient-to-r from-nbm-blue to-nbm-blue-light bg-clip-text text-transparent">
-                  Inspires Greatness
-                </span>
-              </h1>
-              <p className="max-w-lg text-lg leading-relaxed text-gray-500">
-                Experience seamless digital banking, competitive exchange rates, and
-                financial services designed for modern Malawi.
-              </p>
-              <div className="flex flex-wrap gap-4">
-                <Link
-                  to="/open-account"
-                  className="inline-flex items-center gap-2 rounded-xl bg-nbm-blue px-8 py-3.5 font-semibold text-white shadow-lg transition hover:bg-nbm-blue-light hover:shadow-xl no-underline"
-                >
-                  Open Account <ArrowRight className="h-4 w-4" />
-                </Link>
-                <a
-                  href="#app"
-                  className="inline-flex items-center gap-2 rounded-xl border border-gray-200 bg-white px-8 py-3.5 font-semibold text-gray-700 shadow-sm transition hover:border-nbm-blue hover:text-nbm-blue no-underline"
-                >
-                  <Download className="h-4 w-4" /> Download Mo626
-                </a>
-              </div>
-              <div className="flex items-center gap-4 pt-2">
-                <div className="flex -space-x-2">
-                  {[1, 2, 3, 4].map((i) => (
-                    <div
-                      key={i}
-                      className="flex h-9 w-9 items-center justify-center rounded-full border-2 border-white bg-nbm-blue/10 text-xs font-bold text-nbm-blue"
-                    >
-                      {i}
-                    </div>
-                  ))}
+        {/* Hero section with internet banking focus */}
+        <section className="relative overflow-hidden bg-gradient-to-br from-nbm-blue-50 via-white to-white px-4 pb-20 pt-40 sm:px-6 lg:pb-24 lg:pt-48">
+          <div className="pointer-events-none absolute -right-32 -top-32 h-96 w-96 rounded-full bg-nbm-blue/5 blur-3xl" aria-hidden />
+          <div className="pointer-events-none absolute -bottom-20 -left-20 h-72 w-72 rounded-full bg-nbm-blue-accent/10 blur-3xl" aria-hidden />
+          <div className="container relative mx-auto">
+            <div className="flex flex-col items-center justify-between gap-12 lg:flex-row">
+              <div className="space-y-6 lg:w-[52%]">
+                <div className="inline-flex items-center gap-2 rounded-full border border-nbm-blue/20 bg-white px-4 py-2 text-sm font-medium text-nbm-blue shadow-sm">
+                  <Globe className="h-4 w-4 text-nbm-blue-accent" />
+                  BankNet360 · Internet Banking
                 </div>
-                <p className="text-sm text-gray-500">
-                  Trusted by over <strong className="text-gray-800">500,000+</strong>{' '}
-                  customers across Malawi
+                <h1 className="text-4xl font-extrabold leading-[1.1] tracking-tight text-gray-900 lg:text-5xl xl:text-6xl">
+                  Bank
+                  <span className="mt-1 block bg-gradient-to-r from-nbm-blue to-nbm-blue-light bg-clip-text text-transparent">
+                    Anywhere, Anytime
+                  </span>
+                </h1>
+                <p className="max-w-lg text-lg leading-relaxed text-gray-500">
+                  Experience the freedom of unlimited banking with BankNet360. Access your accounts 24/7, make payments, and manage your finances from any corner of the globe.
                 </p>
-              </div>
-              <div className="flex flex-wrap gap-2 pt-1">
-                {['Bank-level security', 'Fast onboarding', '24/7 digital access'].map(
-                  (pill) => (
+                <div className="flex flex-wrap gap-4">
+                  <a
+                    href="https://www.banknet360.co.mw"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 rounded-xl bg-nbm-blue px-8 py-3.5 font-semibold text-white shadow-lg transition hover:bg-nbm-blue-light hover:shadow-xl no-underline"
+                  >
+                    <Globe className="h-4 w-4" /> Access BankNet360
+                  </a>
+                  <a
+                    href="#forms"
+                    className="inline-flex items-center gap-2 rounded-xl border border-gray-200 bg-white px-8 py-3.5 font-semibold text-gray-700 shadow-sm transition hover:border-nbm-blue hover:text-nbm-blue no-underline"
+                  >
+                    <Download className="h-4 w-4" /> Register for Internet Banking
+                  </a>
+                </div>
+                <div className="flex items-center gap-4 pt-2">
+                  <div className="flex -space-x-2">
+                    <div className="flex h-9 w-9 items-center justify-center rounded-full border-2 border-white bg-nbm-blue/10 text-xs font-bold text-nbm-blue">24</div>
+                    <div className="flex h-9 w-9 items-center justify-center rounded-full border-2 border-white bg-nbm-blue/10 text-xs font-bold text-nbm-blue">7</div>
+                  </div>
+                  <p className="text-sm text-gray-500">
+                    <strong className="text-gray-800">24/7 Access</strong> from anywhere in the world
+                  </p>
+                </div>
+                <div className="flex flex-wrap gap-2 pt-1">
+                  {['Digital Certificate', 'Two-Factor Authentication', 'Bank-grade Security'].map((pill) => (
                     <span
                       key={pill}
                       className="rounded-full border border-nbm-blue/15 bg-white px-3 py-1 text-xs font-semibold text-nbm-blue"
                     >
                       {pill}
                     </span>
-                  ),
-                )}
+                  ))}
+                </div>
               </div>
-            </div>
 
-            {/* Exchange rates card */}
-            <div className="w-full lg:w-[44%]">
-              <div className="relative mx-auto max-w-md">
-                <div
-                  className="absolute -left-8 -top-8 h-64 w-64 animate-pulse rounded-full bg-nbm-blue/10 blur-3xl"
-                  aria-hidden
-                />
-                <div className="relative z-10 overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-[var(--shadow-card)]">
-                <img
-                  src="/real/hero.jpg"
-                  alt="NBM digital banking experience"
-                  className="h-44 w-full object-cover"
-                  decoding="async"
-                  onError={(e) => {
-                    e.currentTarget.onerror = null
-                    e.currentTarget.src = '/real/news1.jpg'
-                  }}
-                  />
-                  <div className="border-b border-gray-100 bg-gradient-to-r from-nbm-blue to-nbm-blue-light px-6 py-4 text-white">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <h3 className="font-semibold">Foreign Exchange Rates</h3>
-                        <p className="mt-0.5 text-xs text-white/75">
-                          1 June 2026 · 08:55 CAT
-                        </p>
+              {/* Exchange rates card */}
+              <div className="w-full lg:w-[44%]">
+                <div id="rates" className="relative mx-auto max-w-md">
+                  <div className="absolute -left-8 -top-8 h-64 w-64 animate-pulse rounded-full bg-nbm-blue/10 blur-3xl" aria-hidden />
+                  <div className="relative z-10 overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-[var(--shadow-card)]">
+                    <img
+                      src="/real/hero.jpg"
+                      alt="BankNet360 internet banking"
+                      className="h-44 w-full object-cover"
+                      decoding="async"
+                      onError={(e) => {
+                        e.currentTarget.onerror = null
+                        e.currentTarget.src = '/real/news1.jpg'
+                      }}
+                    />
+                    <div className="border-b border-gray-100 bg-gradient-to-r from-nbm-blue to-nbm-blue-light px-6 py-4 text-white">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <h3 className="font-semibold">Foreign Exchange Rates</h3>
+                          <p className="mt-0.5 text-xs text-white/75">Live indicative rates</p>
+                        </div>
+                        <button
+                          type="button"
+                          className="rounded-lg bg-white/15 p-2 transition hover:bg-white/25"
+                          aria-label="Refresh rates"
+                        >
+                          <RefreshCw className="h-4 w-4" />
+                        </button>
                       </div>
-                      <button
-                        type="button"
-                        className="rounded-lg bg-white/15 p-2 transition hover:bg-white/25"
-                        aria-label="Refresh rates"
-                      >
-                        <RefreshCw className="h-4 w-4" />
-                      </button>
                     </div>
-                  </div>
-                  <div className="divide-y divide-gray-50 p-2">
-                    {Object.entries(exchangeRates).map(([currency, rates]) => (
-                      <div
-                        key={currency}
-                        className="flex cursor-pointer items-center justify-between rounded-xl px-4 py-3 transition hover:bg-nbm-blue-50"
-                      >
-                        <div className="flex items-center gap-3">
-                          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-nbm-blue/10 text-xs font-bold text-nbm-blue">
-                            {currency}
+                    <div className="divide-y divide-gray-50 p-2">
+                      {Object.entries(exchangeRates).map(([currency, rates]) => (
+                        <div
+                          key={currency}
+                          className="flex cursor-pointer items-center justify-between rounded-xl px-4 py-3 transition hover:bg-nbm-blue-50"
+                        >
+                          <div className="flex items-center gap-3">
+                            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-nbm-blue/10 text-xs font-bold text-nbm-blue">
+                              {currency}
+                            </div>
+                            <div>
+                              <p className="font-semibold text-gray-800">{currency}/MWK</p>
+                              <p className="text-xs text-gray-400">Indicative</p>
+                            </div>
                           </div>
-                          <div>
-                            <p className="font-semibold text-gray-800">{currency}/MWK</p>
-                            <p className="text-xs text-gray-400">Indicative</p>
+                          <div className="text-right">
+                            <p className="font-mono text-sm font-medium text-gray-800">
+                              {rates.buying.toFixed(2)}
+                            </p>
+                            <p className="font-mono text-xs text-gray-500">
+                              Sell {rates.selling.toFixed(2)}
+                            </p>
+                            <p
+                              className={`text-xs font-medium ${
+                                rates.change.startsWith('+') ? 'text-nbm-blue' : 'text-red-500'
+                              }`}
+                            >
+                              {rates.change}
+                            </p>
                           </div>
                         </div>
-                        <div className="text-right">
-                          <p className="font-mono text-sm font-medium text-gray-800">
-                            {rates.buying.toFixed(2)}
-                          </p>
-                          <p className="font-mono text-xs text-gray-500">
-                            Sell {rates.selling.toFixed(2)}
-                          </p>
-                          <p
-                            className={`text-xs font-medium ${
-                              rates.change.startsWith('+') ? 'text-nbm-blue' : 'text-red-500'
-                            }`}
-                          >
-                            {rates.change}
-                          </p>
-                        </div>
-                      </div>
-                    ))}
+                      ))}
+                    </div>
+                    <a
+                      href="#rates"
+                      className="flex w-full items-center justify-center gap-1 border-t border-gray-100 py-4 text-sm font-semibold text-nbm-blue transition hover:gap-2 no-underline"
+                    >
+                      More foreign exchange details
+                      <ChevronRight className="h-4 w-4" />
+                    </a>
                   </div>
-                  <a
-                    href="#rates"
-                    className="flex w-full items-center justify-center gap-1 border-t border-gray-100 py-4 text-sm font-semibold text-nbm-blue transition hover:gap-2 no-underline"
-                  >
-                    More foreign exchange details
-                    <ChevronRight className="h-4 w-4" />
-                  </a>
                 </div>
               </div>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* Premium differentiator band */}
-      <section className="bg-[#050b1a] px-4 py-16 text-white sm:px-6">
-        <div className="container mx-auto">
-          <div className="mb-10 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
-            <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-nbm-blue-accent-light">
-                Built To Lead
-              </p>
-              <h2 className="mt-2 max-w-2xl text-3xl font-extrabold leading-tight md:text-4xl">
-                A modern banking experience designed to outclass ordinary bank websites
+        {/* BankNet360 Features Section - Official Content */}
+        <section className="bg-white px-4 py-20 sm:px-6">
+          <div className="container mx-auto">
+            <div className="mb-12 text-center">
+              <div className="inline-flex items-center gap-2 rounded-full bg-nbm-blue-50 px-4 py-1.5 text-sm font-medium text-nbm-blue">
+                <Zap className="h-4 w-4" />
+                Freedom Unlimited
+              </div>
+              <h2 className="mt-4 text-3xl font-bold text-gray-900 lg:text-4xl">
+                Why Choose BankNet360?
               </h2>
-            </div>
-            <a
-              href="#open"
-              aria-label="Start opening an account"
-              className="inline-flex items-center gap-2 rounded-full bg-white px-5 py-2.5 text-sm font-semibold text-[#050b1a] no-underline transition hover:bg-nbm-blue-accent-light"
-            >
-              Start your journey <ArrowRight className="h-4 w-4" />
-            </a>
-          </div>
-          <div className="grid gap-5 md:grid-cols-3">
-            {standoutFeatures.map((feature, index) => (
-              <article
-                key={feature.title}
-                className="group rounded-2xl border border-white/10 bg-white/5 p-6 backdrop-blur-sm transition hover:-translate-y-1 hover:border-nbm-blue-accent/50 hover:bg-white/10"
-              >
-                <p className="mb-3 text-xs font-bold text-nbm-blue-accent-light">
-                  0{index + 1}
-                </p>
-                <h3 className="text-xl font-bold">{feature.title}</h3>
-                <p className="mt-2 text-sm leading-relaxed text-white/70">{feature.detail}</p>
-              </article>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Reference rate banner */}
-      <div className="border-y border-nbm-blue-accent/30 bg-gradient-to-r from-nbm-blue-accent/15 to-nbm-blue-50 px-4 py-4 sm:px-6">
-        <div className="container mx-auto flex flex-col items-start justify-between gap-2 sm:flex-row sm:items-center">
-          <p className="text-sm text-gray-700">
-            <strong className="text-nbm-blue-dark">April 2026 Reference Rate:</strong>{' '}
-            revised to <strong>20.80%</strong> effective 7 April (prev. 22.40%).
-          </p>
-          <a
-            href="#rates"
-            className="text-sm font-semibold text-nbm-blue no-underline hover:underline"
-          >
-            Read more →
-          </a>
-        </div>
-      </div>
-
-      {/* Stats */}
-      <section className="border-b border-gray-100 bg-white py-14 px-4 sm:px-6">
-        <div className="container mx-auto">
-          <div className="grid grid-cols-2 gap-8 md:grid-cols-4">
-            {[
-              { value: '500K+', label: 'Active Customers', icon: Users },
-              { value: 'MWK 2.5B+', label: 'Loans Disbursed', icon: Wallet },
-              { value: '49+', label: 'Service Centres', icon: Building2 },
-              { value: '24/7', label: 'Customer Support', icon: Headphones },
-            ].map((stat) => (
-              <div key={stat.label} className="group text-center">
-                <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-2xl bg-nbm-blue/10 text-nbm-blue transition group-hover:scale-110 group-hover:bg-nbm-blue group-hover:text-white">
-                  <stat.icon className="h-6 w-6" />
-                </div>
-                <div className="text-2xl font-extrabold text-gray-900">{stat.value}</div>
-                <div className="text-sm text-gray-500">{stat.label}</div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Banking pillars */}
-      <section className="bg-nbm-blue-dark px-4 py-16 text-white sm:px-6">
-        <div className="container mx-auto">
-          <div className="mb-10 text-center">
-            <h2 className="text-2xl font-bold lg:text-3xl">How we serve you</h2>
-            <p className="mt-2 text-white/70">Comprehensive banking for every need</p>
-          </div>
-          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-            {bankingPillars.map((pillar) => (
-              <a
-                key={pillar.title}
-                href="#"
-                className="group rounded-2xl border border-white/10 bg-white/5 p-6 backdrop-blur-sm transition hover:border-nbm-blue-accent/50 hover:bg-white/10 no-underline"
-              >
-                <div className="mb-4 flex h-16 w-16 items-center justify-center overflow-hidden rounded-xl bg-white/10 ring-1 ring-white/20 transition group-hover:scale-105">
-                  <img
-                    src={pillar.image}
-                    alt={pillar.title}
-                    className="h-full w-full bg-white p-1 object-contain"
-                    loading="lazy"
-                    decoding="async"
-                    onError={(e) => {
-                      e.currentTarget.onerror = null
-                      e.currentTarget.src = '/real/personal.png'
-                    }}
-                  />
-                </div>
-                <h3 className="font-bold text-white">{pillar.title}</h3>
-                <p className="mt-2 text-sm leading-relaxed text-white/65">{pillar.desc}</p>
-                <span className="mt-4 inline-flex items-center gap-1 text-sm font-medium text-nbm-blue-accent-light group-hover:gap-2">
-                  Explore <ChevronRight className="h-4 w-4" />
-                </span>
-              </a>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Products */}
-      <section className="bg-gray-50 px-4 py-20 sm:px-6">
-        <div className="container mx-auto">
-          <div className="mb-12 text-center">
-            <h2 className="text-3xl font-bold text-gray-900">
-              Products to power your financial life
-            </h2>
-            <p className="mx-auto mt-3 max-w-2xl text-gray-500">
-              From everyday banking to business solutions, we&apos;ve got you covered.
-            </p>
-          </div>
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-            {[
-              {
-                image: '/real/card-a.jpg',
-                title: 'Mortgages',
-                desc: 'Own your dream home',
-                gradient: 'from-nbm-blue to-nbm-blue-light',
-                rate: 'From 12.5%',
-              },
-              {
-                image: '/real/card-b.jpg',
-                title: 'Business Loans',
-                desc: 'Grow your enterprise',
-                gradient: 'from-nbm-blue-dark to-nbm-blue',
-                rate: 'From 14%',
-              },
-              {
-                image: '/real/card-c.jpg',
-                title: 'Credit Cards',
-                desc: 'Rewards & benefits',
-                gradient: 'from-nbm-blue to-nbm-blue-light',
-                rate: 'From 18%',
-              },
-              {
-                image: '/real/card-d.jpg',
-                title: 'Investment Plans',
-                desc: 'Build your wealth',
-                gradient: 'from-nbm-blue-light to-nbm-blue-accent',
-                rate: 'Up to 15%',
-              },
-            ].map((product) => (
-              <div
-                key={product.title}
-                className="group cursor-pointer overflow-hidden rounded-2xl bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-[var(--shadow-card-hover)]"
-              >
-                <div className="relative h-36 overflow-hidden">
-                  <img
-                    src={product.image}
-                    alt={product.title}
-                    className="h-full w-full object-cover"
-                    loading="lazy"
-                    decoding="async"
-                    onError={(e) => {
-                      e.currentTarget.onerror = null
-                      e.currentTarget.src = '/real/card-a.jpg'
-                    }}
-                  />
-                  <div className={`absolute inset-0 bg-gradient-to-br ${product.gradient} opacity-45`} />
-                </div>
-                <div className="p-5">
-                  <h3 className="text-lg font-bold text-gray-900">{product.title}</h3>
-                  <p className="mt-1 text-sm text-gray-500">{product.desc}</p>
-                  <p className="mt-2 text-xs font-bold text-nbm-blue">{product.rate}</p>
-                  <span className="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-nbm-blue transition group-hover:gap-2">
-                    Learn more <ArrowRight className="h-3.5 w-3.5" />
-                  </span>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Mobile app */}
-      <section id="app" className="relative overflow-hidden bg-gradient-to-br from-nbm-blue-dark via-nbm-blue to-nbm-blue-light px-4 py-20 text-white sm:px-6">
-        <div
-          className="pointer-events-none absolute right-0 top-0 h-full w-1/2 bg-[radial-gradient(circle_at_70%_50%,rgba(96,165,250,0.18),transparent_60%)]"
-          aria-hidden
-        />
-        <div className="container relative mx-auto">
-          <div className="grid items-center gap-12 lg:grid-cols-2">
-            <div className="space-y-6">
-              <div className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-2 text-sm backdrop-blur-sm">
-                <Smartphone className="h-4 w-4 text-nbm-blue-accent-light" />
-                Mo626 Digital+ Mobile App
-              </div>
-              <h2 className="text-3xl font-bold lg:text-4xl">Banking at your fingertips</h2>
-              <p className="text-lg text-white/80">
-                Download Mo626 Digital+ for seamless transactions, bill pay, and account
-                management — plus BankNet 360 on the web.
+              <p className="mx-auto mt-3 max-w-2xl text-gray-500">
+                BankNet360 is National Bank of Malawi's premier internet banking solution, offering around-the-clock access to your accounts from anywhere in the world. 
               </p>
-              <ul className="space-y-3">
-                {[
-                  'Instant money transfers',
-                  'Bill payments & airtime',
-                  'Check account balance',
-                  'Loan applications',
-                ].map((feature) => (
-                  <li key={feature} className="flex items-center gap-3">
-                    <CheckCircle className="h-5 w-5 shrink-0 text-nbm-blue-accent-light" />
-                    <span>{feature}</span>
-                  </li>
-                ))}
-              </ul>
-              <div className="flex flex-wrap gap-4 pt-2">
-                <button
-                  type="button"
-                  className="flex items-center gap-3 rounded-xl bg-gray-900 px-5 py-3 transition hover:bg-black"
-                >
-                  <Apple className="h-6 w-6" />
-                  <div className="text-left">
-                    <div className="text-[10px] uppercase opacity-80">Download on the</div>
-                    <div className="text-sm font-semibold">App Store</div>
-                  </div>
-                </button>
-                <button
-                  type="button"
-                  className="flex items-center gap-3 rounded-xl border border-white/30 bg-white/10 px-5 py-3 backdrop-blur transition hover:bg-white/20"
-                >
-                  <Smartphone className="h-6 w-6" />
-                  <div className="text-left">
-                    <div className="text-[10px] uppercase opacity-80">Get it on</div>
-                    <div className="text-sm font-semibold">Google Play</div>
-                  </div>
-                </button>
-              </div>
             </div>
-            <div className="flex justify-center lg:justify-end">
-              <div className="w-72 overflow-hidden rounded-3xl border border-white/20 bg-white/10 p-2 shadow-2xl backdrop-blur">
-                <img
-                  src="/real/mobile.jpg"
-                  alt="NBM mobile banking app"
-                  className="h-[28rem] w-full rounded-[1.25rem] object-cover"
-                  decoding="async"
-                  onError={(e) => {
-                    e.currentTarget.onerror = null
-                    e.currentTarget.src = '/real/hero.jpg'
-                  }}
-                />
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
 
-      {/* News */}
-      <section id="news" className="px-4 py-20 sm:px-6">
-        <div className="container mx-auto">
-          <div className="mb-12 flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
-            <div>
-              <h2 className="text-3xl font-bold text-gray-900">Latest News</h2>
-              <p className="mt-2 text-gray-500">Stay updated with NBM announcements</p>
-            </div>
-            <a
-              href="#"
-              className="inline-flex items-center gap-1 self-start rounded-lg border border-nbm-blue/30 px-4 py-2 text-sm font-semibold text-nbm-blue transition hover:bg-nbm-blue hover:text-white no-underline sm:self-auto"
-            >
-              View All News <ChevronRight className="h-4 w-4" />
-            </a>
-          </div>
-          <div className="mb-4 flex items-center justify-between rounded-xl border border-nbm-blue/15 bg-nbm-blue-50/50 px-4 py-2">
-            <p className="text-xs font-medium text-gray-600">
-              News images rotate automatically for quick scanning.
-            </p>
-            <button
-              type="button"
-              onClick={() => setAutoRotateNews((prev) => !prev)}
-              className="rounded-md border border-nbm-blue/25 bg-white px-3 py-1 text-xs font-semibold text-nbm-blue transition hover:bg-nbm-blue hover:text-white"
-              aria-pressed={autoRotateNews}
-            >
-              {autoRotateNews ? 'Pause rotation' : 'Resume rotation'}
-            </button>
-          </div>
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-            {latestNews.map((news, idx) => (
-              <article
-                key={news.title}
-                className="group cursor-pointer rounded-2xl border border-gray-100 bg-white p-6 shadow-sm transition hover:border-nbm-blue/20 hover:shadow-[var(--shadow-card-hover)]"
-              >
-                <img
-                  src={newsImages[(newsImageTick + idx) % newsImages.length]}
-                  alt={news.title}
-                  className="mb-4 h-32 w-full rounded-xl object-cover transition-all duration-700"
-                  loading="lazy"
-                  decoding="async"
-                  onError={(e) => {
-                    e.currentTarget.onerror = null
-                    e.currentTarget.src = '/real/news1.jpg'
-                  }}
-                />
-                <div className="text-xs font-bold uppercase tracking-wide text-nbm-blue-accent">
-                  {news.category}
-                </div>
-                <h3 className="mt-2 font-bold leading-snug text-gray-900 transition group-hover:text-nbm-blue">
-                  {news.title}
-                </h3>
-                <div className="mt-4 flex items-center justify-between text-xs text-gray-400">
-                  <span className="flex items-center gap-1">
-                    <Calendar className="h-3 w-3" />
-                    {news.date}
-                  </span>
-                  <span>{news.readTime}</span>
-                </div>
-              </article>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Payments CTA */}
-      <section className="bg-gray-50 px-4 py-16 sm:px-6">
-        <div className="container mx-auto">
-          <div className="grid gap-6 lg:grid-cols-3">
-            <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-nbm-blue to-nbm-blue-light p-8 text-white lg:col-span-2">
-              <div
-                className="pointer-events-none absolute -right-10 -top-10 h-40 w-40 rounded-full bg-white/10"
-                aria-hidden
-              />
-              <h3 className="relative text-2xl font-bold">Make Payments Anywhere, Anytime</h3>
-              <p className="relative mt-2 max-w-md text-white/85">
-                Pay bills, buy airtime, and transfer money instantly using Mo626 Digital+ and
-                BankNet 360.
-              </p>
-              <div className="relative mt-6 flex flex-wrap gap-3">
-                <button
-                  type="button"
-                  className="inline-flex items-center gap-2 rounded-xl bg-white px-6 py-2.5 font-semibold text-nbm-blue transition hover:bg-nbm-blue-50"
-                >
-                  Make Payment <Send className="h-4 w-4" />
-                </button>
-                <button
-                  type="button"
-                  className="rounded-xl border border-white/40 px-6 py-2.5 font-semibold text-white transition hover:bg-white/10"
-                >
-                  Learn More
-                </button>
-              </div>
-            </div>
-            <div className="space-y-4 rounded-2xl border border-gray-100 bg-white p-6 shadow-sm">
-              {[
-                {
-                  icon: Percent,
-                  title: 'Competitive Rates',
-                  desc: 'Best exchange rates',
-                  bg: 'bg-nbm-blue/10',
-                  color: 'text-nbm-blue',
-                },
-                {
-                  icon: Lock,
-                  title: 'Secure Transactions',
-                  desc: 'Bank-grade encryption',
-                  bg: 'bg-nbm-blue-50',
-                  color: 'text-nbm-blue',
-                },
-                {
-                  icon: Clock,
-                  title: '24/7 Access',
-                  desc: 'Bank anytime',
-                  bg: 'bg-nbm-blue-50',
-                  color: 'text-nbm-blue',
-                },
-              ].map((item) => (
-                <div key={item.title} className="flex items-center gap-3">
-                  <div
-                    className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-full ${item.bg}`}
-                  >
-                    <item.icon className={`h-5 w-5 ${item.color}`} />
+            <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+              {banknetFeatures.map((feature, idx) => (
+                <div key={idx} className="flex items-start gap-4 rounded-2xl border border-gray-100 bg-white p-5 shadow-sm transition hover:shadow-md">
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-nbm-blue/10 text-nbm-blue">
+                    <CheckCircle className="h-5 w-5" />
                   </div>
                   <div>
-                    <div className="font-semibold text-gray-900">{item.title}</div>
-                    <div className="text-sm text-gray-500">{item.desc}</div>
+                    <p className="text-gray-700">{feature}</p>
                   </div>
                 </div>
               ))}
             </div>
+
+            <div className="mt-10 text-center">
+              <p className="text-sm text-gray-500">
+                <strong className="text-nbm-blue">URL:</strong> www.banknet.co.mw | <strong className="text-nbm-blue">BankNet360:</strong> www.banknet360.co.mw 
+              </p>
+            </div>
+          </div>
+        </section>
+
+        {/* Pricing Section - Official Rates  */}
+        <section className="bg-gray-50 px-4 py-16 sm:px-6">
+          <div className="container mx-auto">
+            <div className="mb-10 text-center">
+              <h2 className="text-2xl font-bold text-gray-900 lg:text-3xl">Subscription Fees</h2>
+              <p className="mt-2 text-gray-500">Affordable internet banking for all customers</p>
+            </div>
+            <div className="mx-auto grid max-w-4xl gap-6 md:grid-cols-2">
+              <div className="rounded-2xl border border-gray-200 bg-white p-8 text-center shadow-sm transition hover:shadow-md">
+                <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-nbm-blue/10">
+                  <Users className="h-8 w-8 text-nbm-blue" />
+                </div>
+                <h3 className="text-xl font-bold text-gray-900">Retail Customers</h3>
+                <p className="mt-4 text-3xl font-extrabold text-nbm-blue">MK2,000<span className="text-base font-normal text-gray-500">/month</span></p>
+                <p className="mt-2 text-sm text-gray-500">Personal accounts, 24/7 access, unlimited transactions</p>
+              </div>
+              <div className="rounded-2xl border-2 border-nbm-blue/30 bg-gradient-to-br from-white to-nbm-blue-50 p-8 text-center shadow-sm transition hover:shadow-md">
+                <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-nbm-blue">
+                  <Building2 className="h-8 w-8 text-white" />
+                </div>
+                <h3 className="text-xl font-bold text-gray-900">Corporate / SME</h3>
+                <p className="mt-4 text-3xl font-extrabold text-nbm-blue">MK5,500<span className="text-base font-normal text-gray-500">/month</span></p>
+                <p className="mt-2 text-sm text-gray-500">Bulk payments, multi-user access, treasury features</p>
+              </div>
+            </div>
+            <p className="mt-6 text-center text-xs text-gray-400">
+              *Selected transactions attract additional fees per NBM Tariff Schedule 
+            </p>
+          </div>
+        </section>
+
+        {/* Publications Section - NEW */}
+        <section id="publications" className="px-4 py-20 sm:px-6">
+          <div className="container mx-auto">
+            <div className="mb-12 text-center">
+              <div className="inline-flex items-center gap-2 rounded-full bg-nbm-blue-50 px-4 py-1.5 text-sm font-medium text-nbm-blue">
+                <FileText className="h-4 w-4" />
+                Official Documents
+              </div>
+              <h2 className="mt-4 text-3xl font-bold text-gray-900 lg:text-4xl">
+                Publications & Reports
+              </h2>
+              <p className="mx-auto mt-3 max-w-2xl text-gray-500">
+                Access our annual reports, financial statements, policies, and other official publications.
+              </p>
+            </div>
+
+            {/* Search and filter bar */}
+            <div className="mb-8 flex flex-col items-center justify-between gap-4 rounded-2xl border border-gray-100 bg-white p-4 shadow-sm sm:flex-row">
+              <div className="relative w-full sm:w-80">
+                <input
+                  type="text"
+                  placeholder="Search publications..."
+                  className="w-full rounded-xl border border-gray-200 py-2 pl-10 pr-4 text-sm focus:border-nbm-blue focus:outline-none focus:ring-1 focus:ring-nbm-blue"
+                />
+                <FileText className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+              </div>
+              <div className="flex flex-wrap gap-2">
+                <button className="rounded-full bg-nbm-blue px-4 py-1.5 text-xs font-semibold text-white transition hover:bg-nbm-blue-light">All</button>
+                <button className="rounded-full border border-gray-200 bg-white px-4 py-1.5 text-xs font-semibold text-gray-600 transition hover:border-nbm-blue hover:text-nbm-blue">Annual Reports</button>
+                <button className="rounded-full border border-gray-200 bg-white px-4 py-1.5 text-xs font-semibold text-gray-600 transition hover:border-nbm-blue hover:text-nbm-blue">Financial</button>
+                <button className="rounded-full border border-gray-200 bg-white px-4 py-1.5 text-xs font-semibold text-gray-600 transition hover:border-nbm-blue hover:text-nbm-blue">Policies</button>
+                <button className="rounded-full border border-gray-200 bg-white px-4 py-1.5 text-xs font-semibold text-gray-600 transition hover:border-nbm-blue hover:text-nbm-blue">Guides</button>
+              </div>
+            </div>
+
+            {/* Publications grid */}
+            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+              {publicationsData.map((pub, idx) => (
+                <div
+                  key={idx}
+                  className="group cursor-pointer rounded-2xl border border-gray-100 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:border-nbm-blue/20 hover:shadow-lg"
+                >
+                  <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-nbm-blue/10 text-nbm-blue transition group-hover:bg-nbm-blue group-hover:text-white">
+                    <pub.icon className="h-6 w-6" />
+                  </div>
+                  <div className="mb-2">
+                    <span className="text-xs font-semibold uppercase tracking-wide text-nbm-blue-accent">
+                      {pub.category}
+                    </span>
+                  </div>
+                  <h3 className="font-bold leading-snug text-gray-900 transition group-hover:text-nbm-blue">
+                    {pub.title}
+                  </h3>
+                  <p className="mt-2 text-sm text-gray-500 line-clamp-2">
+                    {pub.description}
+                  </p>
+                  <div className="mt-4 flex items-center justify-between text-xs text-gray-400">
+                    <span className="flex items-center gap-1">
+                      <Calendar className="h-3 w-3" />
+                      {pub.date}
+                    </span>
+                    <span className="flex items-center gap-1">
+                      <Download className="h-3 w-3" />
+                      {pub.size}
+                    </span>
+                  </div>
+                  <div className="mt-4 pt-2">
+                    <a
+                      href="#"
+                      className="inline-flex items-center gap-1 text-sm font-semibold text-nbm-blue transition hover:gap-2 no-underline"
+                    >
+                      Download PDF <Download className="h-3.5 w-3.5" />
+                    </a>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* View all link */}
+            <div className="mt-10 text-center">
+              <a
+                href="#"
+                className="inline-flex items-center gap-2 rounded-full border border-nbm-blue/30 bg-white px-6 py-3 text-sm font-semibold text-nbm-blue transition hover:bg-nbm-blue hover:text-white no-underline"
+              >
+                View All Publications <ArrowRight className="h-4 w-4" />
+              </a>
+            </div>
+
+            {/* Archive note */}
+            <div className="mt-8 rounded-xl border border-gray-200 bg-gray-50 p-4 text-center">
+              <p className="text-xs text-gray-500">
+                Archived publications prior to 2020 are available upon request. Contact our corporate communications team at <a href="mailto:corporatecomms@nbm.mw" className="text-nbm-blue hover:underline">corporatecomms@nbm.mw</a>
+              </p>
+            </div>
+          </div>
+        </section>
+
+        {/* Security Section - Official Content */}
+        <section className="bg-nbm-blue-dark px-4 py-16 text-white sm:px-6">
+          <div className="container mx-auto">
+            <div className="mb-10 text-center">
+              <div className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-1.5 text-sm font-medium backdrop-blur-sm">
+                <Lock className="h-4 w-4" />
+                Bank-Grade Security
+              </div>
+              <h2 className="mt-4 text-3xl font-bold">Your Security is Our Priority</h2>
+              <p className="mx-auto mt-3 max-w-2xl text-white/70">
+                BankNet360 incorporates comprehensive security features to protect your financial information. 
+              </p>
+            </div>
+            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+              {[
+                { title: 'Digital Certificates', desc: '128-bit SSL encryption with digital certificates and firewalls', icon: Shield },
+                { title: 'Unique User ID', desc: 'Personal identification number unique to each customer', icon: Lock },
+                { title: 'Password Protocols', desc: 'Secure password management with regular updates', icon: KeyRound },
+                { title: 'Two-Factor Auth', desc: 'OTP delivered to mobile phone and/or email inbox', icon: Smartphone },
+              ].map((item) => (
+                <div key={item.title} className="rounded-2xl border border-white/10 bg-white/5 p-6 backdrop-blur-sm">
+                  <item.icon className="mb-4 h-8 w-8 text-nbm-blue-accent-light" />
+                  <h3 className="font-bold text-white">{item.title}</h3>
+                  <p className="mt-2 text-sm text-white/60">{item.desc}</p>
+                </div>
+              ))}
+            </div>
+            <div className="mt-8 rounded-xl border border-yellow-500/30 bg-yellow-500/10 p-4 text-center">
+              <p className="text-sm text-yellow-300">
+                ⚠️ <strong>Important:</strong> National Bank of Malawi will never request confirmation of your login details via email or phone. Always verify you are on the official BankNet360 website. 
+              </p>
+            </div>
+          </div>
+        </section>
+
+        {/* Forms Section for Registration */}
+        <section id="forms" className="px-4 py-20 sm:px-6">
+          <div className="container mx-auto">
+            <div className="mb-12 text-center">
+              <h2 className="text-3xl font-bold text-gray-900">Register for Internet Banking</h2>
+              <p className="mx-auto mt-3 max-w-2xl text-gray-500">
+                Complete the application form to start your BankNet360 journey. Available to all National Bank of Malawi account holders. 
+              </p>
+            </div>
+            <div className="mx-auto max-w-3xl overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-lg">
+              <div className="border-b border-gray-100 bg-gradient-to-r from-nbm-blue to-nbm-blue-light px-6 py-4 text-white">
+                <h3 className="font-semibold">Internet Banking Application Form</h3>
+                <p className="mt-1 text-sm text-white/75">Download, complete, and submit to any NBM Service Centre</p>
+              </div>
+              <div className="p-6">
+                <div className="mb-6 rounded-lg bg-gray-50 p-4">
+                  <p className="text-sm text-gray-600">For assistance, contact:</p>
+                  <div className="mt-2 flex flex-wrap gap-4 text-sm">
+                    <span className="flex items-center gap-2"><Phone className="h-4 w-4 text-nbm-blue" /> (265) 111 820 622</span>
+                    <span className="flex items-center gap-2"><Mail className="h-4 w-4 text-nbm-blue" /> ebu@natbankmw.com </span>
+                    <span className="flex items-center gap-2"><MapPin className="h-4 w-4 text-nbm-blue" /> NBM Towers, Blantyre</span>
+                  </div>
+                </div>
+                <div className="flex flex-col gap-4 sm:flex-row">
+                  <a
+                    href="#"
+                    className="inline-flex items-center justify-center gap-2 rounded-xl bg-nbm-blue px-6 py-3 font-semibold text-white transition hover:bg-nbm-blue-light"
+                  >
+                    <Download className="h-4 w-4" /> Download Application Form (PDF)
+                  </a>
+                  <a
+                    href="https://www.banknet360.co.mw"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center justify-center gap-2 rounded-xl border border-gray-300 bg-white px-6 py-3 font-semibold text-gray-700 transition hover:border-nbm-blue hover:text-nbm-blue"
+                  >
+                    <Globe className="h-4 w-4" /> Visit BankNet360 Portal
+                  </a>
+                </div>
+                <div className="mt-6 text-xs text-gray-400">
+                  <p>* Corporate customers require Super-User authorization for multi-user access </p>
+                  <p className="mt-1">* Terms and conditions apply. Monthly subscription fees as per current tariff.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Rest of the sections remain similar to original */}
+        {/* Premium differentiator band */}
+        <section className="bg-[#050b1a] px-4 py-16 text-white sm:px-6">
+          <div className="container mx-auto">
+            <div className="mb-10 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-[0.2em] text-nbm-blue-accent-light">
+                  Digital Innovation Leader
+                </p>
+                <h2 className="mt-2 max-w-2xl text-3xl font-extrabold leading-tight md:text-4xl">
+                  91% of transactions are now done on digital platforms 
+                </h2>
+              </div>
+              <a
+                href="#forms"
+                className="inline-flex items-center gap-2 rounded-full bg-white px-5 py-2.5 text-sm font-semibold text-[#050b1a] no-underline transition hover:bg-nbm-blue-accent-light"
+              >
+                Register Now <ArrowRight className="h-4 w-4" />
+              </a>
+            </div>
+            <div className="grid gap-5 md:grid-cols-3">
+              {standoutFeatures.map((feature, index) => (
+                <article
+                  key={feature.title}
+                  className="group rounded-2xl border border-white/10 bg-white/5 p-6 backdrop-blur-sm transition hover:-translate-y-1 hover:border-nbm-blue-accent/50 hover:bg-white/10"
+                >
+                  <p className="mb-3 text-xs font-bold text-nbm-blue-accent-light">
+                    0{index + 1}
+                  </p>
+                  <h3 className="text-xl font-bold">{feature.title}</h3>
+                  <p className="mt-2 text-sm leading-relaxed text-white/70">{feature.detail}</p>
+                </article>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* Reference rate banner */}
+        <div className="border-y border-nbm-blue-accent/30 bg-gradient-to-r from-nbm-blue-accent/15 to-nbm-blue-50 px-4 py-4 sm:px-6">
+          <div className="container mx-auto flex flex-col items-start justify-between gap-2 sm:flex-row sm:items-center">
+            <p className="text-sm text-gray-700">
+              <strong className="text-nbm-blue-dark">April 2026 Reference Rate:</strong>{' '}
+              revised to <strong>20.80%</strong> effective 7 April (prev. 22.40%).
+            </p>
+            <a href="#rates" className="text-sm font-semibold text-nbm-blue no-underline hover:underline">
+              Read more →
+            </a>
           </div>
         </div>
-      </section>
 
-      {/* Final CTA */}
-      <section className="px-4 py-20 sm:px-6">
-        <div className="container mx-auto rounded-3xl bg-gradient-to-r from-nbm-blue-50 via-white to-nbm-blue-50 px-8 py-16 text-center ring-1 ring-nbm-blue/10">
-          <h2 className="text-3xl font-bold text-gray-900">
-            Ready to experience banking differently?
-          </h2>
-          <p className="mx-auto mt-3 max-w-md text-gray-500">
-            Join over 500,000 Malawians who trust National Bank of Malawi.
-          </p>
-          <a
-            href="#open"
-            className="mt-8 inline-flex items-center gap-2 rounded-full bg-nbm-blue px-10 py-4 text-lg font-bold text-white shadow-lg transition hover:scale-105 hover:bg-nbm-blue-light hover:shadow-xl no-underline"
-          >
-            Open an Account Today <ArrowRight className="h-5 w-5" />
-          </a>
-        </div>
-      </section>
+        {/* Stats */}
+        <section className="border-b border-gray-100 bg-white py-14 px-4 sm:px-6">
+          <div className="container mx-auto">
+            <div className="grid grid-cols-2 gap-8 md:grid-cols-4">
+              {[
+                { value: '500K+', label: 'Active Customers', icon: Users },
+                { value: '91%', label: 'Digital Transactions', icon: Smartphone },
+                { value: '29+', label: 'Service Centres', icon: Building2 },
+                { value: '24/7', label: 'Customer Support', icon: Headphones },
+              ].map((stat) => (
+                <div key={stat.label} className="group text-center">
+                  <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-2xl bg-nbm-blue/10 text-nbm-blue transition group-hover:scale-110 group-hover:bg-nbm-blue group-hover:text-white">
+                    <stat.icon className="h-6 w-6" />
+                  </div>
+                  <div className="text-2xl font-extrabold text-gray-900">{stat.value}</div>
+                  <div className="text-sm text-gray-500">{stat.label}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* Banking pillars */}
+        <section id="retail" className="bg-nbm-blue-dark px-4 py-16 text-white sm:px-6">
+          <div className="container mx-auto">
+            <div className="mb-10 text-center">
+              <h2 className="text-2xl font-bold lg:text-3xl">How we serve you</h2>
+              <p className="mt-2 text-white/70">Comprehensive banking for every need</p>
+            </div>
+            <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+              {bankingPillars.map((pillar) => (
+                <a
+                  key={pillar.title}
+                  href="#"
+                  className="group rounded-2xl border border-white/10 bg-white/5 p-6 backdrop-blur-sm transition hover:border-nbm-blue-accent/50 hover:bg-white/10 no-underline"
+                >
+                  <div className="mb-4 flex h-16 w-16 items-center justify-center overflow-hidden rounded-xl bg-white/10 ring-1 ring-white/20 transition group-hover:scale-105">
+                    <img
+                      src={pillar.image}
+                      alt={pillar.title}
+                      className="h-full w-full bg-white p-1 object-contain"
+                      loading="lazy"
+                      decoding="async"
+                      onError={(e) => {
+                        e.currentTarget.onerror = null
+                        e.currentTarget.src = '/real/personal.png'
+                      }}
+                    />
+                  </div>
+                  <h3 className="font-bold text-white">{pillar.title}</h3>
+                  <p className="mt-2 text-sm leading-relaxed text-white/65">{pillar.desc}</p>
+                  <span className="mt-4 inline-flex items-center gap-1 text-sm font-medium text-nbm-blue-accent-light group-hover:gap-2">
+                    Explore <ChevronRight className="h-4 w-4" />
+                  </span>
+                </a>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* Mobile app promo */}
+        <section id="app" className="relative overflow-hidden bg-gradient-to-br from-nbm-blue-dark via-nbm-blue to-nbm-blue-light px-4 py-20 text-white sm:px-6">
+          <div
+            className="pointer-events-none absolute right-0 top-0 h-full w-1/2 bg-[radial-gradient(circle_at_70%_50%,rgba(96,165,250,0.18),transparent_60%)]"
+            aria-hidden
+          />
+          <div className="container relative mx-auto">
+            <div className="grid items-center gap-12 lg:grid-cols-2">
+              <div className="space-y-6">
+                <div className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-2 text-sm backdrop-blur-sm">
+                  <Smartphone className="h-4 w-4 text-nbm-blue-accent-light" />
+                  Mo626 Digital+ Mobile App
+                </div>
+                <h2 className="text-3xl font-bold lg:text-4xl">Banking at your fingertips</h2>
+                <p className="text-lg text-white/80">
+                  Download Mo626 Digital+ for seamless transactions, bill pay, and account
+                  management — running on both Android and iOS systems. 
+                </p>
+                <ul className="space-y-3">
+                  {['Send money to any bank account', 'Push money to mobile wallets', 'Pay utility bills & buy electricity', 'Cardless withdrawals', 'Buy airtime instantly'].map((feature) => (
+                    <li key={feature} className="flex items-center gap-3">
+                      <CheckCircle className="h-5 w-5 shrink-0 text-nbm-blue-accent-light" />
+                      <span>{feature}</span>
+                    </li>
+                  ))}
+                </ul>
+                <div className="flex flex-wrap gap-4 pt-2">
+                  <button type="button" className="flex items-center gap-3 rounded-xl bg-gray-900 px-5 py-3 transition hover:bg-black">
+                    <Apple className="h-6 w-6" />
+                    <div className="text-left">
+                      <div className="text-[10px] uppercase opacity-80">Download on the</div>
+                      <div className="text-sm font-semibold">App Store</div>
+                    </div>
+                  </button>
+                  <button type="button" className="flex items-center gap-3 rounded-xl border border-white/30 bg-white/10 px-5 py-3 backdrop-blur transition hover:bg-white/20">
+                    <Smartphone className="h-6 w-6" />
+                    <div className="text-left">
+                      <div className="text-[10px] uppercase opacity-80">Get it on</div>
+                      <div className="text-sm font-semibold">Google Play</div>
+                    </div>
+                  </button>
+                </div>
+              </div>
+              <div className="flex justify-center lg:justify-end">
+                <div className="w-72 overflow-hidden rounded-3xl border border-white/20 bg-white/10 p-2 shadow-2xl backdrop-blur">
+                  <img
+                    src="/real/mobile.jpg"
+                    alt="Mo626 Digital+ mobile app"
+                    className="h-[28rem] w-full rounded-[1.25rem] object-cover"
+                    decoding="async"
+                    onError={(e) => {
+                      e.currentTarget.onerror = null
+                      e.currentTarget.src = '/real/hero.jpg'
+                    }}
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* News */}
+        <section id="news" className="px-4 py-20 sm:px-6">
+          <div className="container mx-auto">
+            <div className="mb-12 flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
+              <div>
+                <h2 className="text-3xl font-bold text-gray-900">Latest News</h2>
+                <p className="mt-2 text-gray-500">Stay updated with NBM announcements</p>
+              </div>
+              <a
+                href="#"
+                className="inline-flex items-center gap-1 self-start rounded-lg border border-nbm-blue/30 px-4 py-2 text-sm font-semibold text-nbm-blue transition hover:bg-nbm-blue hover:text-white no-underline sm:self-auto"
+              >
+                View All News <ChevronRight className="h-4 w-4" />
+              </a>
+            </div>
+            <div className="mb-4 flex items-center justify-between rounded-xl border border-nbm-blue/15 bg-nbm-blue-50/50 px-4 py-2">
+              <p className="text-xs font-medium text-gray-600">
+                News images rotate automatically for quick scanning.
+              </p>
+              <button
+                type="button"
+                onClick={() => setAutoRotateNews((prev) => !prev)}
+                className="rounded-md border border-nbm-blue/25 bg-white px-3 py-1 text-xs font-semibold text-nbm-blue transition hover:bg-nbm-blue hover:text-white"
+                aria-pressed={autoRotateNews}
+              >
+                {autoRotateNews ? 'Pause rotation' : 'Resume rotation'}
+              </button>
+            </div>
+            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+              {latestNews.map((news, idx) => (
+                <article
+                  key={news.title}
+                  className="group cursor-pointer rounded-2xl border border-gray-100 bg-white p-6 shadow-sm transition hover:border-nbm-blue/20 hover:shadow-[var(--shadow-card-hover)]"
+                >
+                  <img
+                    src={newsImages[(newsImageTick + idx) % newsImages.length]}
+                    alt={news.title}
+                    className="mb-4 h-32 w-full rounded-xl object-cover transition-all duration-700"
+                    loading="lazy"
+                    decoding="async"
+                    onError={(e) => {
+                      e.currentTarget.onerror = null
+                      e.currentTarget.src = '/real/news1.jpg'
+                    }}
+                  />
+                  <div className="text-xs font-bold uppercase tracking-wide text-nbm-blue-accent">
+                    {news.category}
+                  </div>
+                  <h3 className="mt-2 font-bold leading-snug text-gray-900 transition group-hover:text-nbm-blue">
+                    {news.title}
+                  </h3>
+                  <div className="mt-4 flex items-center justify-between text-xs text-gray-400">
+                    <span className="flex items-center gap-1">
+                      <Calendar className="h-3 w-3" />
+                      {news.date}
+                    </span>
+                    <span>{news.readTime}</span>
+                  </div>
+                </article>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* Final CTA */}
+        <section id="open" className="px-4 py-20 sm:px-6">
+          <div className="container mx-auto rounded-3xl bg-gradient-to-r from-nbm-blue-50 via-white to-nbm-blue-50 px-8 py-16 text-center ring-1 ring-nbm-blue/10">
+            <h2 className="text-3xl font-bold text-gray-900">
+              Ready to experience internet banking?
+            </h2>
+            <p className="mx-auto mt-3 max-w-md text-gray-500">
+              Join over 500,000 customers who bank with National Bank of Malawi.
+            </p>
+            <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
+              <a
+                href="https://www.banknet360.co.mw"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 rounded-full bg-nbm-blue px-8 py-4 text-lg font-bold text-white shadow-lg transition hover:scale-105 hover:bg-nbm-blue-light hover:shadow-xl no-underline"
+              >
+                Login to BankNet360 <ArrowRight className="h-5 w-5" />
+              </a>
+              <a
+                href="#forms"
+                className="inline-flex items-center gap-2 rounded-full border-2 border-nbm-blue bg-white px-8 py-4 text-lg font-bold text-nbm-blue shadow-lg transition hover:scale-105 hover:bg-nbm-blue-50 no-underline"
+              >
+                Register Now
+              </a>
+            </div>
+          </div>
+        </section>
       </main>
 
       {/* Footer */}
@@ -931,9 +1023,7 @@ function HomePage() {
               <ul className="space-y-2 text-sm">
                 {['About Us', 'Contact Us', 'Media', 'Publications'].map((link) => (
                   <li key={link}>
-                    <a href="#" className="transition hover:text-nbm-blue-accent-light">
-                      {link}
-                    </a>
+                    <a href={link === 'Publications' ? '#publications' : '#'} className="transition hover:text-nbm-blue-accent-light">{link}</a>
                   </li>
                 ))}
               </ul>
@@ -941,15 +1031,10 @@ function HomePage() {
             <div>
               <h4 className="mb-4 font-semibold text-white">Digital Banking</h4>
               <ul className="space-y-2 text-sm">
-                {['Internet Banking', 'Mo626 Digital+', 'BankNet 360', 'e-Services'].map(
-                  (link) => (
-                    <li key={link}>
-                      <a href="#" className="transition hover:text-nbm-blue-accent-light">
-                        {link}
-                      </a>
-                    </li>
-                  ),
-                )}
+                <li><a href="https://www.banknet360.co.mw" target="_blank" rel="noopener noreferrer" className="transition hover:text-nbm-blue-accent-light">BankNet360</a></li>
+                <li><a href="#" className="transition hover:text-nbm-blue-accent-light">Mo626 Digital+</a></li>
+                <li><a href="#" className="transition hover:text-nbm-blue-accent-light">BankNet Online</a></li>
+                <li><a href="#" className="transition hover:text-nbm-blue-accent-light">e-Services</a></li>
               </ul>
             </div>
             <div>
@@ -961,7 +1046,7 @@ function HomePage() {
                 </li>
                 <li className="flex items-start gap-2">
                   <Mail className="mt-0.5 h-4 w-4 shrink-0 text-nbm-blue-accent" />
-                  service@nbm.mw
+                  ebu@natbankmw.com
                 </li>
                 <li className="flex items-start gap-2">
                   <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-nbm-blue-accent" />
@@ -973,7 +1058,7 @@ function HomePage() {
           <div className="border-t border-white/10 pt-8 text-center text-xs text-white/50">
             <p>
               &copy; {new Date().getFullYear()} National Bank of Malawi plc. All rights
-              reserved. Design mockup — not the official website.
+              reserved. Authorised by the Reserve Bank of Malawi.
             </p>
           </div>
         </div>
@@ -982,247 +1067,12 @@ function HomePage() {
   )
 }
 
-function OpenAccountPage() {
+// Missing icon component
+function KeyRound({ className }: { className?: string }) {
   return (
-    <div className="min-h-screen bg-white">
-      <header className="border-b border-gray-100 bg-white">
-        <div className="container mx-auto flex items-center justify-between px-4 py-4 sm:px-6">
-          <Link to="/" className="flex items-center gap-3 no-underline">
-            <LogoMark />
-            <div className="hidden sm:block">
-              <span className="text-base font-bold leading-tight text-gray-900">
-                National Bank
-              </span>
-              <span className="block text-xs font-medium text-nbm-blue">
-                of Malawi plc · The bank of the Nation
-              </span>
-            </div>
-          </Link>
-          <div className="flex items-center gap-3">
-            <Link
-              to="/"
-              className="rounded-full border border-gray-200 px-4 py-2 text-sm font-semibold text-gray-700 transition hover:border-nbm-blue hover:text-nbm-blue no-underline"
-            >
-              Back to Home
-            </Link>
-            <a
-              href="#contact"
-              className="rounded-full bg-nbm-blue px-5 py-2.5 text-sm font-semibold text-white shadow-md transition hover:bg-nbm-blue-light no-underline"
-            >
-              Contact us
-            </a>
-          </div>
-        </div>
-      </header>
-
-      <main className="px-4 pb-20 pt-10 sm:px-6">
-        <div className="container mx-auto">
-          <nav aria-label="Breadcrumb" className="text-sm text-gray-500">
-            <ol className="flex flex-wrap items-center gap-2">
-              <li>
-                <Link to="/" className="hover:text-nbm-blue">
-                  Home
-                </Link>
-              </li>
-              <li aria-hidden className="text-gray-300">
-                /
-              </li>
-              <li className="font-semibold text-gray-700">Open Account</li>
-            </ol>
-          </nav>
-
-          <section className="mt-8 overflow-hidden rounded-3xl bg-gradient-to-br from-nbm-blue-dark via-nbm-blue to-nbm-blue-light text-white ring-1 ring-white/10">
-            <div className="grid gap-10 px-8 py-12 lg:grid-cols-[1.25fr_0.75fr] lg:px-12">
-              <div className="space-y-5">
-                <p className="inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-2 text-xs font-semibold uppercase tracking-[0.22em] text-white/80">
-                  Trade Finance Service
-                </p>
-                <h1 className="text-3xl font-extrabold leading-tight sm:text-4xl">
-                  Open Account
-                </h1>
-                <p className="max-w-2xl text-lg text-white/85">
-                  A payment arrangement for importers and traders to pay foreign suppliers for
-                  goods received directly, after presenting exchange control documentation.
-                </p>
-                <div className="flex flex-wrap gap-3 pt-2">
-                  <a
-                    href="#how-it-works"
-                    className="inline-flex items-center gap-2 rounded-xl bg-white px-6 py-3 text-sm font-semibold text-nbm-blue-dark shadow-sm transition hover:bg-nbm-blue-50 no-underline"
-                  >
-                    How it works <ChevronRight className="h-4 w-4" />
-                  </a>
-                  <a
-                    href="#pricing"
-                    className="inline-flex items-center gap-2 rounded-xl border border-white/25 bg-white/10 px-6 py-3 text-sm font-semibold text-white backdrop-blur transition hover:bg-white/15 no-underline"
-                  >
-                    View pricing <ChevronRight className="h-4 w-4" />
-                  </a>
-                </div>
-              </div>
-
-              <aside className="rounded-2xl bg-white/10 p-6 ring-1 ring-white/15 backdrop-blur">
-                <h2 className="text-base font-bold">At a glance</h2>
-                <dl className="mt-4 space-y-4 text-sm text-white/85">
-                  <div className="flex items-start justify-between gap-6">
-                    <dt className="text-white/70">Target market</dt>
-                    <dd className="text-right font-semibold">Importers &amp; traders</dd>
-                  </div>
-                  <div className="flex items-start justify-between gap-6">
-                    <dt className="text-white/70">Key requirement</dt>
-                    <dd className="text-right font-semibold">Exchange control documents</dd>
-                  </div>
-                  <div className="flex items-start justify-between gap-6">
-                    <dt className="text-white/70">Payment basis</dt>
-                    <dd className="text-right font-semibold">Customer obligation</dd>
-                  </div>
-                </dl>
-              </aside>
-            </div>
-          </section>
-
-          <section className="mt-14 grid gap-6 lg:grid-cols-3">
-            <article className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm">
-              <h2 className="text-lg font-bold text-gray-900">What is it?</h2>
-              <p className="mt-3 text-sm leading-relaxed text-gray-600">
-                An open account payment is used for making payment to a foreign supplier for
-                goods which have been received directly from the supplier, without bank
-                engagement in the shipment.
-              </p>
-            </article>
-            <article
-              id="how-it-works"
-              className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm"
-            >
-              <h2 className="text-lg font-bold text-gray-900">How does it work?</h2>
-              <ol className="mt-4 space-y-3 text-sm text-gray-600">
-                {[
-                  'Customer receives goods directly from the foreign supplier.',
-                  'Customer presents exchange control documents to the bank.',
-                  'Bank facilitates payment to the foreign supplier.',
-                ].map((step) => (
-                  <li key={step} className="flex gap-3">
-                    <span className="mt-0.5 inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-nbm-blue/10 text-xs font-extrabold text-nbm-blue">
-                      {step.startsWith('Customer receives') ? '1' : step.startsWith('Customer presents') ? '2' : '3'}
-                    </span>
-                    <span>{step}</span>
-                  </li>
-                ))}
-              </ol>
-            </article>
-            <article className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm">
-              <h2 className="text-lg font-bold text-gray-900">Benefits</h2>
-              <ul className="mt-4 space-y-3 text-sm text-gray-600">
-                {[
-                  'Customer keeps full control of the payment decision.',
-                  'Straightforward documentation-based processing.',
-                  'Suitable for established supplier relationships.',
-                ].map((benefit) => (
-                  <li key={benefit} className="flex items-start gap-3">
-                    <CheckCircle className="mt-0.5 h-5 w-5 shrink-0 text-nbm-blue" />
-                    <span>{benefit}</span>
-                  </li>
-                ))}
-              </ul>
-            </article>
-          </section>
-
-          <section id="pricing" className="mt-14">
-            <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-              <div>
-                <h2 className="text-2xl font-extrabold text-gray-900">Pricing</h2>
-                <p className="mt-1 text-sm text-gray-500">
-                  Indicative fees based on the legacy NBM “Open Account” service page.
-                </p>
-              </div>
-              <div className="rounded-xl border border-nbm-blue/15 bg-nbm-blue-50/60 px-4 py-3 text-xs text-gray-700">
-                Fees may change. Confirm the latest charges with NBM before transacting.
-              </div>
-            </div>
-
-            <div className="mt-6 grid gap-5 md:grid-cols-2 lg:grid-cols-4">
-              {[
-                { label: 'Commission', value: '1% (min MWK 6,900 · max MWK 31,800)' },
-                { label: 'EC Application Charge', value: 'MWK 5,220' },
-                { label: 'SWIFT (fixed)', value: 'MWK 21,050' },
-                { label: 'Stamp Duty', value: 'MWK 1.00' },
-              ].map((fee) => (
-                <div
-                  key={fee.label}
-                  className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm"
-                >
-                  <div className="text-xs font-bold uppercase tracking-wide text-nbm-blue-accent">
-                    {fee.label}
-                  </div>
-                  <div className="mt-3 text-lg font-extrabold text-gray-900">
-                    {fee.value}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </section>
-
-          <section
-            id="contact"
-            className="mt-14 overflow-hidden rounded-3xl bg-gradient-to-r from-nbm-blue-50 via-white to-nbm-blue-50 px-8 py-12 ring-1 ring-nbm-blue/10"
-          >
-            <div className="grid gap-8 lg:grid-cols-3 lg:items-center">
-              <div className="lg:col-span-2">
-                <h2 className="text-2xl font-extrabold text-gray-900">
-                  Need help with Open Account payments?
-                </h2>
-                <p className="mt-2 max-w-2xl text-gray-600">
-                  Talk to our Trade Finance team about documentation, processing timelines, and
-                  applicable fees for your transaction.
-                </p>
-                <div className="mt-6 flex flex-wrap gap-3">
-                  <a
-                    href="tel:+265111820622"
-                    className="inline-flex items-center gap-2 rounded-xl bg-nbm-blue px-6 py-3 text-sm font-semibold text-white shadow-md transition hover:bg-nbm-blue-light no-underline"
-                  >
-                    <Phone className="h-4 w-4" />
-                    Call (265) 111 820 622
-                  </a>
-                  <a
-                    href="mailto:service@nbm.mw"
-                    className="inline-flex items-center gap-2 rounded-xl border border-gray-200 bg-white px-6 py-3 text-sm font-semibold text-gray-700 shadow-sm transition hover:border-nbm-blue hover:text-nbm-blue no-underline"
-                  >
-                    <Mail className="h-4 w-4" />
-                    Email service@nbm.mw
-                  </a>
-                </div>
-              </div>
-
-              <div className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm">
-                <h3 className="font-bold text-gray-900">What to prepare</h3>
-                <ul className="mt-4 space-y-3 text-sm text-gray-600">
-                  {[
-                    'Supplier invoice & goods details',
-                    'Exchange control documentation',
-                    'Beneficiary banking information (SWIFT, etc.)',
-                    'Your NBM account details',
-                  ].map((item) => (
-                    <li key={item} className="flex items-start gap-3">
-                      <span className="mt-0.5 inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-nbm-blue/10 text-[11px] font-extrabold text-nbm-blue">
-                        ✓
-                      </span>
-                      <span>{item}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </div>
-          </section>
-        </div>
-      </main>
-    </div>
-  )
-}
-
-export default function App() {
-  return (
-    <Routes>
-      <Route path="/" element={<HomePage />} />
-      <Route path="/open-account" element={<OpenAccountPage />} />
-    </Routes>
+    <svg className={className} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M2 18v3c0 .6.4 1 1 1h4v-3h3v-3h2l1.4-1.4a6.5 6.5 0 1 0-4-4Z" />
+      <circle cx="16.5" cy="9.5" r="2.5" />
+    </svg>
   )
 }
