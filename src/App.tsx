@@ -6,7 +6,7 @@ import {
   Calendar,
   CheckCircle,
   ChevronRight,
-  Clock,
+
   Download,
   FileText,
   Globe,
@@ -15,14 +15,14 @@ import {
   Lock,
   Mail,
   MapPin,
-  Percent,
+  
   Phone,
   RefreshCw,
-  Send,
+  
   Shield,
   Smartphone,
   Users,
-  Wallet,
+  
   Zap,
 } from 'lucide-react'
 
