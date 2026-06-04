@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import {
-  Apple,
+  
   ArrowRight,
   Building2,
   Calendar,
@@ -41,7 +41,7 @@ import {
   BarChart3,
   Truck,
   Factory,
-  Plane,
+  
   LineChart,
   Handshake,
   Scale,
@@ -52,10 +52,10 @@ import {
   Fingerprint,
   Percent,
   DollarSign,
-  Coins,
+  
   Timer,
   Receipt,
-  Settings,
+  
 } from 'lucide-react'
 
 type ExchangeRate = {
@@ -72,28 +72,6 @@ const exchangeRates: Record<string, ExchangeRate> = {
   CAD: { buying: 945.6, selling: 960.25, change: '+0.1%' },
 }
 
-const bankingPillars = [
-  {
-    image: '/real/personal.png',
-    title: 'Retail Banking',
-    desc: 'Personal accounts, loans, and everyday banking for individuals.',
-  },
-  {
-    image: '/real/international.png',
-    title: 'International Banking',
-    desc: 'Cross-border payments and global financial solutions.',
-  },
-  {
-    image: '/real/corporate.png',
-    title: 'Corporate Banking',
-    desc: 'Sophisticated services for enterprises and institutions.',
-  },
-  {
-    image: '/real/asset.png',
-    title: 'Asset Finance',
-    desc: 'Expertise across asset classes for investors.',
-  },
-]
 
 // Retail Banking Products Data
 const retailAccounts = [
