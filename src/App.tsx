@@ -270,20 +270,6 @@ const newsImages = [
   '/real/mobile.jpg',
 ]
 
-const standoutFeatures = [
-  {
-    title: 'Instant Onboarding',
-    detail: 'Open an account in minutes with guided digital verification.',
-  },
-  {
-    title: 'Smart Money Tools',
-    detail: 'Track spending, savings goals, and transfers in one clean dashboard.',
-  },
-  {
-    title: 'Enterprise Ready',
-    detail: 'Bulk payments, approvals, and treasury visibility for growing teams.',
-  },
-]
 
 // Navigation tabs as specified
 const navTabs = [
