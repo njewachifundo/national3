@@ -1,3 +1,9 @@
+/// <reference types="react" />
+declare module 'react' {
+  function useState<S>(initialState: S | (() => S)): [S, (value: S | ((prevState: S) => S)) => void]
+  function useEffect(effect: () => void | (() => void), deps?: any[]): void
+  
+}
 import { useState, useEffect } from 'react'
 import {
   ArrowRight,
