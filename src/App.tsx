@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import {
   ArrowRight,
   Banknote,
@@ -17,88 +17,131 @@ import {
   Search,
   Smartphone,
   X,
+  ChevronRight,
+  MapPin,
+  Shield,
+  TrendingUp,
+  Home,
+  Pause,
+  Play,
 } from 'lucide-react'
 
 const colors = {
-  ink: '#171717',
-  charcoal: '#28231F',
-  muted: '#686159',
-  line: '#DED7CE',
-  paper: '#F5F1EA',
-  ivory: '#FFFDF8',
+  ink: '#0F1B2D',
+  charcoal: '#1F2A3A',
+  muted: '#5F738C',
+  line: '#E2E8F0',
+  paper: '#F8FAFE',
+  ivory: '#FFFFFF',
   white: '#FFFFFF',
-  oxblood: '#8D241F',
-  copper: '#9C6334',
-  gold: '#C39A45',
-  forest: '#2F5946',
-  mist: '#E9F0EA',
+  oxblood: '#0050B4',
+  copper: '#4A90E2',
+  forest: '#2E9D7F',
+  gold: '#F2C14E',
+  mist: '#F0F4FA',
 }
+
+// High quality rotating hero images
+const heroImages = [
+  {
+    url: 'https://images.unsplash.com/photo-1501167786227-4cba60f6d58f?w=1920&h=1080&fit=crop',
+    alt: 'Modern bank building exterior',
+  },
+  {
+    url: 'https://images.unsplash.com/photo-1559526324-4b87b5e36e44?w=1920&h=1080&fit=crop',
+    alt: 'Person using mobile banking app',
+  },
+  {
+    url: 'https://images.unsplash.com/photo-1563013544-824ae1b704d3?w=1920&h=1080&fit=crop',
+    alt: 'Credit cards and financial planning',
+  },
+  {
+    url: 'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=1920&h=1080&fit=crop',
+    alt: 'Business handshake deal',
+  },
+  {
+    url: 'https://images.unsplash.com/photo-1579621970795-87facc2f976d?w=1920&h=1080&fit=crop',
+    alt: 'Savings and investment concept',
+  },
+]
 
 const customerSegments = [
   {
     image: '/real/card-a.jpg',
-    label: 'Personal banking',
-    title: 'Accounts, cards, and loans for everyday life',
-    text: 'Clear pathways for opening accounts, borrowing, card services, and digital banking.',
+    label: 'Personal Banking',
+    title: 'Banking for your everyday life',
+    text: 'Accounts, cards, loans, and mortgages tailored to your financial goals.',
     icon: PiggyBank,
   },
   {
     image: '/real/card-d.jpg',
-    label: 'Corporate banking',
-    title: 'Finance and support for growing businesses',
-    text: 'Facilities for SMEs, corporates, working capital, guarantees, and trade.',
+    label: 'Business Banking',
+    title: 'Support for your business',
+    text: 'From startups to enterprises, find financing, cash management, and trade solutions.',
     icon: BriefcaseBusiness,
   },
   {
     image: '/real/card-b.jpg',
-    label: 'International',
-    title: 'Treasury, forex, and cross-border services',
-    text: 'Foreign exchange, MoneyGram, custody, diaspora, and international trade support.',
+    label: 'Wealth Management',
+    title: 'Grow and protect your wealth',
+    text: 'Investment advice, retirement planning, and private banking services.',
     icon: Globe2,
   },
 ]
 
-const bannerPictures = [
-  { image: '/real/hero.jpg' },
-  { image: '/real/mobile.jpg' },
-  { image: '/real/card-c.jpg' },
-]
-
 const quickActions = [
-  { icon: MousePointer2, title: 'Open account', text: 'Start an account application.' },
-  { icon: Calculator, title: 'Loan calculator', text: 'Estimate repayments.' },
-  { icon: Download, title: 'Forms', text: 'Download banking forms.' },
-  { icon: Search, title: 'Rates', text: 'View tariffs and forex.' },
+  { icon: MousePointer2, title: 'Open an Account', text: 'Start your application online' },
+  { icon: Calculator, title: 'Mortgage Calculator', text: 'Estimate your payments' },
+  { icon: Download, title: 'Download Forms', text: 'Access banking documents' },
+  { icon: Search, title: 'View Rates', text: 'Check current interest rates' },
 ]
 
 const productGroups = [
   {
     title: 'Banking',
     icon: PiggyBank,
-    links: ['Savings Account', 'Current Account', 'Student Serve Account', 'Diaspora Account'],
+    links: ['Chequing Accounts', 'Savings Accounts', 'Student Banking', 'Senior Banking'],
   },
   {
     title: 'Borrowing',
     icon: Banknote,
-    links: ['Consumer Loans', 'Pay-Day Loan', 'Mortgage Finance', 'Asset Based Financing'],
+    links: ['Personal Loans', 'Mortgages', 'Home Equity Loans', 'Lines of Credit'],
   },
   {
-    title: 'Cards and payments',
+    title: 'Cards & Payments',
     icon: CreditCard,
-    links: ['Visa Cards', 'Contactless Cards', 'Cash Passport', 'Mo626Pay'],
+    links: ['Visa Credit Cards', 'Debit Cards', 'Prepaid Cards', 'Mobile Payments'],
   },
   {
-    title: 'Digital services',
+    title: 'Digital Services',
     icon: Smartphone,
-    links: ['Mo626 Digital+', 'Mo626ice', 'BankNet360', 'Cardless Withdrawal'],
+    links: ['Online Banking', 'Mobile App', 'Bill Payments', 'Money Transfers'],
   },
 ]
 
 const supportLinks = [
-  { icon: LockKeyhole, title: 'Security centre', text: 'Protect your account and digital access.' },
-  { icon: Phone, title: 'Contact support', text: 'Get help with accounts, cards, and services.' },
-  { icon: FileText, title: 'Statements', text: 'Access balances, statements, and service requests.' },
-  { icon: ReceiptText, title: 'Bills and tax', text: 'Pay utilities, airtime, merchants, and selected public services.' },
+  { icon: LockKeyhole, title: 'Security Centre', text: 'Protect your accounts and digital access.' },
+  { icon: Phone, title: 'Customer Support', text: 'Get help with accounts, cards, and services.' },
+  { icon: FileText, title: 'Statements & Documents', text: 'Access eStatements, tax documents, and confirmations.' },
+  { icon: ReceiptText, title: 'Bill Payments', text: 'Pay utilities, credit cards, and more.' },
+]
+
+const insights = [
+  {
+    title: 'Economic Outlook 2026',
+    description: 'Our latest analysis on interest rates, inflation, and market trends for the coming year.',
+    icon: TrendingUp,
+  },
+  {
+    title: 'Digital Banking Security',
+    description: 'How to protect yourself from online fraud and scams with our advanced security features.',
+    icon: Shield,
+  },
+  {
+    title: 'First-Time Home Buyer Guide',
+    description: 'Everything you need to know about mortgages, down payments, and buying your first home.',
+    icon: Home,
+  },
 ]
 
 const languages = ['English', 'Chichewa', 'Tumbuka']
@@ -109,14 +152,14 @@ function LanguageSelector({ dark = false }: { dark?: boolean }) {
   return (
     <label
       className={`flex items-center gap-2 border px-3 py-2 ${dark ? 'bg-transparent' : 'bg-white'}`}
-      style={{ borderColor: dark ? 'rgba(255,255,255,0.3)' : colors.line }}
+      style={{ borderColor: dark ? 'rgba(255,255,255,0.2)' : colors.line }}
     >
-      <Globe2 className="h-4 w-4" style={{ color: dark ? colors.gold : colors.oxblood }} />
+      <Globe2 className="h-4 w-4" style={{ color: dark ? colors.white : colors.oxblood }} />
       <span className="sr-only">Select language</span>
       <select
         value={language}
         onChange={(event) => setLanguage(event.target.value)}
-        className="bg-transparent text-sm font-black outline-none"
+        className="bg-transparent text-sm font-medium outline-none"
         style={{ color: dark ? colors.white : colors.ink }}
       >
         {languages.map((item) => (
@@ -135,14 +178,14 @@ function Logo({ dark = false }: { dark?: boolean }) {
       <div
         className={`
           flex items-center justify-center overflow-hidden rounded-lg
-          ${dark ? 'bg-transparent' : 'bg-[#8D241F]'}
+          ${dark ? 'bg-transparent' : 'bg-[#0050B4]'}
         `}
         style={{
           width: dark ? '320px' : '300px',
           height: dark ? '90px' : '80px',
           border: dark
             ? '1px solid rgba(255,255,255,0.22)'
-            : '1px solid rgba(141,36,31,0.1)',
+            : '1px solid rgba(0,80,180,0.25)',
         }}
       >
         {!logoFailed ? (
@@ -156,7 +199,7 @@ function Logo({ dark = false }: { dark?: boolean }) {
           <div className="flex flex-col items-center">
             <span
               className="text-3xl font-black tracking-tight"
-              style={{ color: dark ? colors.gold : colors.white }}
+              style={{ color: dark ? colors.oxblood : colors.white }}
             >
               NBM
             </span>
@@ -177,6 +220,19 @@ export default function App() {
   const [menuOpen, setMenuOpen] = useState(false)
   const [loginOpen, setLoginOpen] = useState(false)
   const [credential, setCredential] = useState('')
+  const [activeTab, setActiveTab] = useState('Personal')
+  const [currentHeroIndex, setCurrentHeroIndex] = useState(0)
+  const [isPlaying, setIsPlaying] = useState(true)
+
+  useEffect(() => {
+    if (!isPlaying) return
+    
+    const interval = setInterval(() => {
+      setCurrentHeroIndex((prev) => (prev + 1) % heroImages.length)
+    }, 5000)
+
+    return () => clearInterval(interval)
+  }, [isPlaying])
 
   const handleLogin = (event: React.FormEvent) => {
     event.preventDefault()
@@ -185,33 +241,62 @@ export default function App() {
     setLoginOpen(false)
   }
 
+  const handleTabClick = (tab: string) => {
+    setActiveTab(tab)
+    alert(`${tab} Banking section loaded.`)
+  }
+
+  const goToPrevious = () => {
+    setCurrentHeroIndex((prev) => (prev - 1 + heroImages.length) % heroImages.length)
+    setIsPlaying(false)
+  }
+
+  const goToNext = () => {
+    setCurrentHeroIndex((prev) => (prev + 1) % heroImages.length)
+    setIsPlaying(false)
+  }
+
+  const togglePlayPause = () => {
+    setIsPlaying(!isPlaying)
+  }
+
+  const navItems = ['Personal', 'Business', 'Wealth', 'Cards', 'Digital']
+
   return (
-    <div className="min-h-screen" style={{ backgroundColor: colors.ivory, color: colors.ink, fontFamily: "'Inter', system-ui, sans-serif" }}>
+    <div className="min-h-screen" style={{ backgroundColor: colors.paper, color: colors.ink, fontFamily: "'Inter', system-ui, sans-serif" }}>
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700;14..32,800;14..32,900&display=swap');
-
-        .soft-hover {
-          transition: transform 220ms ease, box-shadow 220ms ease, border-color 220ms ease;
+        @import url('https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap');
+        
+        .hover-lift {
+          transition: transform 0.2s ease, box-shadow 0.2s ease;
         }
-
-        .soft-hover:hover {
-          transform: translateY(-3px);
-          box-shadow: 0 18px 42px rgba(23, 23, 23, 0.12);
+        .hover-lift:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.08);
+        }
+        .tab-active {
+          border-bottom-color: ${colors.oxblood};
+          color: ${colors.oxblood};
+        }
+        .hero-fade {
+          transition: opacity 1s ease-in-out;
         }
       `}</style>
 
-      <header className="sticky top-0 z-50 bg-white">
-        <div className="border-b text-xs font-black" style={{ borderColor: colors.line, color: colors.muted }}>
-          <div className="mx-auto flex max-w-7xl items-center justify-between px-5 py-2.5">
-            <div className="hidden items-center gap-6 md:flex">
-              {['Personal', 'SME', 'Corporate', 'Diaspora'].map((item) => (
-                <button key={item}>{item}</button>
-              ))}
+      {/* Top Bar */}
+      <header className="sticky top-0 z-50 bg-white shadow-sm">
+        <div className="border-b" style={{ borderColor: colors.line }}>
+          <div className="mx-auto flex max-w-7xl items-center justify-between px-5 py-2">
+            <div className="hidden items-center gap-6 text-xs font-medium md:flex" style={{ color: colors.muted }}>
+              <button className="hover:text-[#0050B4]">Personal</button>
+              <button className="hover:text-[#0050B4]">Business</button>
+              <button className="hover:text-[#0050B4]">Wealth Management</button>
+              <button className="hover:text-[#0050B4]">Investor Services</button>
             </div>
-            <div className="flex items-center gap-5">
-              <button>Branches</button>
-              <button>Help</button>
-              <button>Contact</button>
+            <div className="flex items-center gap-5 text-xs font-medium" style={{ color: colors.muted }}>
+              <button className="flex items-center gap-1 hover:text-[#0050B4]"><MapPin className="h-3 w-3" /> Branches</button>
+              <button className="hover:text-[#0050B4]">Help</button>
+              <button className="hover:text-[#0050B4]">Contact</button>
               <div className="hidden md:block">
                 <LanguageSelector />
               </div>
@@ -219,290 +304,375 @@ export default function App() {
           </div>
         </div>
 
+        {/* Main Navigation */}
         <div className="mx-auto flex max-w-7xl items-center justify-between px-5 py-4">
           <Logo />
-          <nav className="hidden items-center gap-8 lg:flex">
-            {['Banking', 'Borrowing', 'Cards', 'Digital', 'Business'].map((item) => (
-              <button key={item} className="border-b-2 border-transparent pb-1 text-sm font-black hover:border-[#8d241f]">
+          <nav className="hidden items-center gap-6 lg:flex">
+            {navItems.map((item) => (
+              <button
+                key={item}
+                onClick={() => handleTabClick(item)}
+                className={`border-b-2 pb-1 text-sm font-semibold transition-colors ${
+                  activeTab === item ? 'tab-active' : 'border-transparent hover:border-[#0050B4]'
+                }`}
+                style={{ color: activeTab === item ? colors.oxblood : colors.ink }}
+              >
                 {item}
               </button>
             ))}
           </nav>
           <div className="hidden items-center gap-3 lg:flex">
-            <button onClick={() => setLoginOpen(true)} className="border px-5 py-2.5 text-sm font-black" style={{ borderColor: colors.ink }}>
-              Log in
+            <button
+              onClick={() => setLoginOpen(true)}
+              className="rounded border px-5 py-2 text-sm font-semibold transition-all hover:bg-gray-50"
+              style={{ borderColor: colors.line }}
+            >
+              Sign In
             </button>
-            <button className="px-5 py-2.5 text-sm font-black text-white" style={{ backgroundColor: colors.oxblood }}>
-              Open account
+            <button
+              className="rounded px-5 py-2 text-sm font-semibold text-white transition-all hover:opacity-90"
+              style={{ backgroundColor: colors.oxblood }}
+            >
+              Open an Account
             </button>
           </div>
-          <button className="border bg-white p-2 lg:hidden" onClick={() => setMenuOpen(!menuOpen)} aria-label="Toggle menu" style={{ borderColor: colors.line }}>
-            {menuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+          <button
+            className="rounded border bg-white p-2 lg:hidden"
+            onClick={() => setMenuOpen(!menuOpen)}
+            style={{ borderColor: colors.line }}
+          >
+            {menuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
           </button>
         </div>
 
+        {/* Mobile Menu */}
         {menuOpen && (
           <div className="border-t bg-white px-5 py-4 lg:hidden" style={{ borderColor: colors.line }}>
             <div className="mb-3">
               <LanguageSelector />
             </div>
-            {['Banking', 'Borrowing', 'Cards', 'Digital', 'Business', 'Log in'].map((item) => (
+            {[...navItems, 'Sign In'].map((item) => (
               <button
                 key={item}
-                className="block w-full border-b px-1 py-3 text-left font-black"
+                className="block w-full border-b py-3 text-left font-medium"
                 style={{ borderColor: colors.line }}
-                onClick={() => item === 'Log in' && setLoginOpen(true)}
+                onClick={() => {
+                  if (item === 'Sign In') setLoginOpen(true)
+                  else handleTabClick(item)
+                  setMenuOpen(false)
+                }}
               >
                 {item}
               </button>
-
             ))}
           </div>
         )}
       </header>
 
       <main>
-        <section className="text-white" style={{ backgroundColor: colors.charcoal }}>
+        {/* Hero Section with Rotating High Quality Images */}
+        <section className="relative overflow-hidden" style={{ backgroundColor: colors.charcoal }}>
+          {/* Rotating Background Images */}
+          <div className="absolute inset-0">
+            {heroImages.map((image, index) => (
+              <div
+                key={index}
+                className={`absolute inset-0 transition-opacity duration-1000 ${
+                  index === currentHeroIndex ? 'opacity-100' : 'opacity-0'
+                }`}
+              >
+                <img
+                  src={image.url}
+                  alt={image.alt}
+                  className="h-full w-full object-cover"
+                />
+                <div className="absolute inset-0 bg-black/50"></div>
+              </div>
+            ))}
+          </div>
+
+          {/* Hero Content */}
+          <div className="relative mx-auto max-w-7xl px-5 py-16 md:py-24">
+            <div className="max-w-2xl text-white">
+              <p className="mb-3 text-sm font-semibold uppercase tracking-wide" style={{ color: colors.gold }}>
+                National Bank of Malawi
+              </p>
+              <h1 className="text-4xl font-black leading-tight md:text-5xl lg:text-6xl">
+                Banking built around you.
+              </h1>
+              <p className="mt-4 text-lg text-white/80">
+                Discover personalized banking solutions for every stage of your financial journey.
+              </p>
+              <div className="mt-8 flex flex-wrap gap-4">
+                <button
+                  onClick={() => setLoginOpen(true)}
+                  className="rounded bg-white px-6 py-3 font-semibold text-[#0050B4] transition-all hover:bg-gray-100"
+                >
+                  Sign In
+                </button>
+                <button className="rounded border border-white px-6 py-3 font-semibold text-white transition-all hover:bg-white/10">
+                  Learn More <ArrowRight className="ml-2 inline h-4 w-4" />
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {/* Navigation Controls */}
+          <div className="absolute bottom-6 left-0 right-0 mx-auto flex items-center justify-center gap-4">
+            <button
+              onClick={goToPrevious}
+              className="rounded-full bg-black/50 p-2 text-white transition-all hover:bg-black/70"
+              aria-label="Previous image"
+            >
+              <ChevronRight className="h-5 w-5 rotate-180" />
+            </button>
+            
+            {/* Dot Indicators */}
+            <div className="flex gap-2">
+              {heroImages.map((_, index) => (
+                <button
+                  key={index}
+                  onClick={() => {
+                    setCurrentHeroIndex(index)
+                    setIsPlaying(false)
+                  }}
+                  className={`h-2 rounded-full transition-all ${
+                    index === currentHeroIndex ? 'w-6 bg-white' : 'w-2 bg-white/50 hover:bg-white/80'
+                  }`}
+                  aria-label={`Go to slide ${index + 1}`}
+                />
+              ))}
+            </div>
+
+            <button
+              onClick={goToNext}
+              className="rounded-full bg-black/50 p-2 text-white transition-all hover:bg-black/70"
+              aria-label="Next image"
+            >
+              <ChevronRight className="h-5 w-5" />
+            </button>
+
+            <button
+              onClick={togglePlayPause}
+              className="rounded-full bg-black/50 p-2 text-white transition-all hover:bg-black/70 ml-2"
+              aria-label={isPlaying ? 'Pause slideshow' : 'Play slideshow'}
+            >
+              {isPlaying ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
+            </button>
+          </div>
+        </section>
+
+        {/* Quick Actions Bar */}
+        <section className="border-b bg-white" style={{ borderColor: colors.line }}>
+          <div className="mx-auto max-w-7xl px-5 py-5">
+            <div className="grid gap-3 md:grid-cols-4">
+              {quickActions.map((action) => (
+                <button
+                  key={action.title}
+                  className="hover-lift flex items-center justify-between rounded-lg border p-4 text-left transition-all"
+                  style={{ borderColor: colors.line }}
+                >
+                  <div>
+                    <p className="font-semibold">{action.title}</p>
+                    <p className="mt-0.5 text-sm" style={{ color: colors.muted }}>{action.text}</p>
+                  </div>
+                  <action.icon className="h-5 w-5 shrink-0" style={{ color: colors.oxblood }} />
+                </button>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* Customer Segments */}
+        <section className="bg-white px-5 py-16">
           <div className="mx-auto max-w-7xl">
-            <div className="flex min-h-[720px] flex-col justify-between px-5 py-8 md:px-8 lg:px-10">
-              <div className="flex flex-col gap-5 md:flex-row md:items-start md:justify-between">
-                {/* <div className="w-fit bg-white p-3 shadow-2xl">
-                  <Logo dark />
-                </div> */}
-                <LanguageSelector dark />
-              </div>
-
-              <div className="grid gap-8 lg:grid-cols-[0.42fr_0.58fr] lg:items-end">
-                <div className="max-w-xl">
-                <p className="mb-4 text-xs font-black uppercase tracking-[0.22em]" style={{ color: colors.gold }}>
-                  National Bank of Malawi
-                </p>
-                <h1 className="text-4xl font-black leading-tight md:text-6xl">Banking built around people, business, and progress.</h1>
-                <p className="mt-6 text-base leading-8 text-white/78 md:text-lg">
-                  A stronger professional homepage with a dominant NBM logo, large banner photography, and simple customer pathways.
-                </p>
-                <div className="mt-8 flex flex-wrap gap-3">
-                  <button className="flex items-center gap-2 bg-white px-5 py-3 font-black" style={{ color: colors.ink }}>
-                    Explore services <ArrowRight className="h-4 w-4" />
-                  </button>
-                  <button onClick={() => setLoginOpen(true)} className="border px-5 py-3 font-black text-white" style={{ borderColor: 'rgba(255,255,255,0.4)' }}>
-                    Log in
-                  </button>
-                </div>
-                </div>
-
-                <div className="grid gap-4 md:grid-cols-[1.2fr_0.8fr]">
-                  <div className="relative min-h-[430px] overflow-hidden">
-                    <img src="/real/hero.jpg" alt="NBM banking banner" className="h-full w-full object-cover" />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/62 via-black/8 to-transparent" />
-                    <div className="absolute bottom-0 left-0 p-6">
-                      <p className="text-xs font-black uppercase tracking-[0.2em]" style={{ color: colors.gold }}>
-                        Featured
-                      </p>
-                     
-                    </div>
+            <div className="mb-10 text-center">
+              <p className="text-sm font-semibold uppercase tracking-wide" style={{ color: colors.oxblood }}>
+                Financial Solutions
+              </p>
+              <h2 className="mt-2 text-3xl font-black md:text-4xl">Banking for every need</h2>
+              <p className="mx-auto mt-3 max-w-2xl" style={{ color: colors.muted }}>
+                From personal accounts to corporate solutions, we have the right financial products for you.
+              </p>
+            </div>
+            <div className="grid gap-6 md:grid-cols-3">
+              {customerSegments.map((segment) => (
+                <article
+                  key={segment.title}
+                  className="group overflow-hidden rounded-xl border transition-all hover:shadow-md"
+                  style={{ borderColor: colors.line }}
+                >
+                  <img src={segment.image} alt={segment.label} className="h-56 w-full object-cover" />
+                  <div className="p-6">
+                    <segment.icon className="mb-4 h-6 w-6" style={{ color: colors.oxblood }} />
+                    <p className="text-xs font-semibold uppercase" style={{ color: colors.oxblood }}>{segment.label}</p>
+                    <h3 className="mt-1 text-xl font-bold">{segment.title}</h3>
+                    <p className="mt-2 leading-relaxed" style={{ color: colors.muted }}>{segment.text}</p>
+                    <button className="mt-4 flex items-center gap-1 text-sm font-semibold transition-all group-hover:gap-2" style={{ color: colors.oxblood }}>
+                      Learn more <ChevronRight className="h-4 w-4" />
+                    </button>
                   </div>
-                  <div className="grid gap-4">
-                    {bannerPictures.slice(1).map((banner) => (
-                      <article key={banner.image} className="relative min-h-[205px] overflow-hidden">
-                        <img src={banner.image} className="h-full w-full object-cover" />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/66 to-transparent" />
-                        <h3 className="absolute bottom-0 left-0 p-5 text-xl font-black leading-tight">{banner.title}</h3>
-                      </article>
+                </article>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* Product Finder */}
+        <section className="px-5 py-16" style={{ backgroundColor: colors.mist }}>
+          <div className="mx-auto max-w-7xl">
+            <div className="mb-8 text-center">
+              <p className="text-sm font-semibold uppercase tracking-wide" style={{ color: colors.oxblood }}>
+                Product Finder
+              </p>
+              <h2 className="mt-2 text-3xl font-black md:text-4xl">Find the right product for you</h2>
+            </div>
+            <div className="grid gap-0 overflow-hidden rounded-xl border bg-white md:grid-cols-2 lg:grid-cols-4" style={{ borderColor: colors.line }}>
+              {productGroups.map((group) => (
+                <div key={group.title} className="border-b p-6 last:border-b-0 md:border-b-0 md:border-r" style={{ borderColor: colors.line }}>
+                  <group.icon className="mb-4 h-7 w-7" style={{ color: colors.copper }} />
+                  <h3 className="text-xl font-bold">{group.title}</h3>
+                  <ul className="mt-4 space-y-2">
+                    {group.links.map((item) => (
+                      <li key={item} className="cursor-pointer text-sm transition-colors hover:text-[#0050B4]" style={{ color: colors.muted }}>
+                        {item}
+                      </li>
                     ))}
-                  </div>
+                  </ul>
                 </div>
-              </div>
+              ))}
+            </div>
+          </div>
+        </section>
 
-              <div className="grid gap-3 border-t pt-5 sm:grid-cols-3" style={{ borderColor: 'rgba(255,255,255,0.18)' }}>
-                {['Personal', 'Corporate', 'International'].map((item) => (
-                  <button key={item} className="border px-4 py-3 text-left text-sm font-black" style={{ borderColor: 'rgba(255,255,255,0.18)' }}>
-                    {item}
+        {/* Insights Section */}
+        <section className="bg-white px-5 py-16">
+          <div className="mx-auto max-w-7xl">
+            <div className="mb-8 flex flex-wrap items-center justify-between gap-4">
+              <div>
+                <p className="text-sm font-semibold uppercase tracking-wide" style={{ color: colors.oxblood }}>
+                  Insights & Advice
+                </p>
+                <h2 className="mt-1 text-2xl font-black md:text-3xl">Thought leadership to help you move forward</h2>
+              </div>
+              <button className="flex items-center gap-1 text-sm font-semibold transition-all hover:gap-2" style={{ color: colors.oxblood }}>
+                View all insights <ArrowRight className="h-4 w-4" />
+              </button>
+            </div>
+            <div className="grid gap-6 md:grid-cols-3">
+              {insights.map((insight) => (
+                <div key={insight.title} className="rounded-xl border p-6 transition-all hover:shadow-md" style={{ borderColor: colors.line }}>
+                  <insight.icon className="mb-4 h-8 w-8" style={{ color: colors.oxblood }} />
+                  <h3 className="text-lg font-bold">{insight.title}</h3>
+                  <p className="mt-2 leading-relaxed" style={{ color: colors.muted }}>{insight.description}</p>
+                  <button className="mt-3 flex items-center gap-1 text-sm font-semibold transition-all hover:gap-2" style={{ color: colors.oxblood }}>
+                    Read more <ChevronRight className="h-4 w-4" />
                   </button>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* Support Section */}
+        <section className="px-5 py-16" style={{ backgroundColor: colors.paper }}>
+          <div className="mx-auto max-w-7xl">
+            <div className="grid gap-10 lg:grid-cols-2">
+              <div>
+                <p className="text-sm font-semibold uppercase tracking-wide" style={{ color: colors.forest }}>
+                  Help & Support
+                </p>
+                <h2 className="mt-2 text-3xl font-black md:text-4xl">We're here to help</h2>
+                <p className="mt-4 leading-relaxed" style={{ color: colors.muted }}>
+                  Get the support you need to manage your finances confidently. Our dedicated team is available 24/7 to assist you.
+                </p>
+              </div>
+              <div className="grid gap-4 sm:grid-cols-2">
+                {supportLinks.map((item) => (
+                  <div key={item.title} className="rounded-xl bg-white p-5 shadow-sm transition-all hover:shadow-md">
+                    <item.icon className="mb-3 h-6 w-6" style={{ color: colors.forest }} />
+                    <h3 className="font-semibold">{item.title}</h3>
+                    <p className="mt-1 text-sm leading-relaxed" style={{ color: colors.muted }}>{item.text}</p>
+                  </div>
                 ))}
               </div>
             </div>
           </div>
         </section>
-
-        <section className="bg-white px-5 py-12">
-          <div className="mx-auto grid max-w-7xl gap-5 md:grid-cols-3">
-            {customerSegments.map((segment) => (
-              <article key={segment.title} className="soft-hover overflow-hidden border bg-white" style={{ borderColor: colors.line }}>
-                <img src={segment.image} alt={segment.label} className="h-64 w-full object-cover" />
-                <div className="p-6">
-                  <segment.icon className="mb-6 h-7 w-7" style={{ color: colors.oxblood }} />
-                  <p className="mb-3 text-xs font-black uppercase tracking-[0.2em]" style={{ color: colors.oxblood }}>
-                    {segment.label}
-                  </p>
-                  <h2 className="text-2xl font-black leading-tight">{segment.title}</h2>
-                  <p className="mt-4 leading-7" style={{ color: colors.muted }}>
-                    {segment.text}
-                  </p>
-                  <button className="mt-6 flex items-center gap-2 font-black" style={{ color: colors.oxblood }}>
-                    Learn more <ArrowRight className="h-4 w-4" />
-                  </button>
-                </div>
-              </article>
-            ))}
-          </div>
-        </section>
-
-        <section className="border-b bg-white px-5 py-5" style={{ borderColor: colors.line }}>
-          <div className="mx-auto grid max-w-7xl gap-3 md:grid-cols-4">
-            {quickActions.map((action) => (
-              <button key={action.title} className="soft-hover flex items-center justify-between border p-5 text-left" style={{ borderColor: colors.line }}>
-                <span>
-                  <span className="block text-lg font-black">{action.title}</span>
-                  <span className="mt-1 block text-sm font-semibold" style={{ color: colors.muted }}>
-                    {action.text}
-                  </span>
-                </span>
-                <action.icon className="ml-4 h-6 w-6 shrink-0" style={{ color: colors.oxblood }} />
-              </button>
-            ))}
-          </div>
-        </section>
-
-        <section className="px-5 py-18 md:py-20" style={{ backgroundColor: colors.paper }}>
-          <div className="mx-auto max-w-7xl">
-            <div className="mb-10 grid gap-6 lg:grid-cols-[0.48fr_0.52fr] lg:items-end">
-              <div>
-                <p className="mb-3 text-xs font-black uppercase tracking-[0.22em]" style={{ color: colors.oxblood }}>
-                  Product finder
-                </p>
-                <h2 className="text-4xl font-black leading-tight md:text-5xl">Choose the service you need, then move quickly.</h2>
-              </div>
-              <p className="max-w-2xl leading-8" style={{ color: colors.muted }}>
-                The page now uses one clear product section instead of repeating the same banking categories in several places.
-              </p>
-            </div>
-
-            <div className="grid gap-0 border-t border-l bg-white md:grid-cols-2 xl:grid-cols-4" style={{ borderColor: colors.line }}>
-              {productGroups.map((group) => (
-                <article key={group.title} className="border-r border-b p-6" style={{ borderColor: colors.line }}>
-                  <group.icon className="mb-8 h-8 w-8" style={{ color: colors.copper }} />
-                  <h3 className="text-2xl font-black">{group.title}</h3>
-                  <ul className="mt-5 space-y-3">
-                    {group.links.map((item) => (
-                      <li key={item} className="text-sm font-bold" style={{ color: colors.muted }}>
-                        {item}
-                      </li>
-                    ))}
-                  </ul>
-                </article>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        <section className="bg-white px-5 py-18 md:py-20">
-          <div className="mx-auto grid max-w-7xl gap-8 lg:grid-cols-[0.9fr_1.1fr]">
-            <div>
-              <p className="mb-3 text-xs font-black uppercase tracking-[0.22em]" style={{ color: colors.forest }}>
-                Important update
-              </p>
-              <h2 className="text-4xl font-black leading-tight md:text-5xl">Card services and customer notices can live in a dedicated feature area.</h2>
-              <p className="mt-5 leading-8" style={{ color: colors.muted }}>
-                This keeps promotional content away from core banking navigation and gives announcements enough space to breathe.
-              </p>
-              <button className="mt-8 flex items-center gap-2 border px-5 py-3 font-black" style={{ borderColor: colors.ink }}>
-                Read notice <ArrowRight className="h-4 w-4" />
-              </button>
-            </div>
-            <div className="border bg-white p-4" style={{ borderColor: colors.line }}>
-              <img src="/real/news2.jpg" alt="MyFuel card services notice" className="h-full min-h-[320px] w-full object-cover" />
-            </div>
-          </div>
-        </section>
-
-        <section className="px-5 py-18 md:py-20" style={{ backgroundColor: colors.mist }}>
-          <div className="mx-auto grid max-w-7xl gap-8 lg:grid-cols-[0.8fr_1.2fr]">
-            <div>
-              <p className="mb-3 text-xs font-black uppercase tracking-[0.22em]" style={{ color: colors.forest }}>
-                Help and support
-              </p>
-              <h2 className="text-4xl font-black leading-tight md:text-5xl">Support customers before they get stuck.</h2>
-              <p className="mt-5 leading-8" style={{ color: colors.muted }}>
-                A single support area keeps security, contacts, statements, and bill payments visible without overloading the page.
-              </p>
-            </div>
-            <div className="grid gap-0 border-t border-l bg-white md:grid-cols-2" style={{ borderColor: colors.line }}>
-              {supportLinks.map((item) => (
-                <article key={item.title} className="border-r border-b p-7" style={{ borderColor: colors.line }}>
-                  <item.icon className="mb-8 h-7 w-7" style={{ color: colors.forest }} />
-                  <h3 className="text-xl font-black">{item.title}</h3>
-                  <p className="mt-3 leading-7" style={{ color: colors.muted }}>
-                    {item.text}
-                  </p>
-                </article>
-              ))}
-            </div>
-          </div>
-        </section>
       </main>
 
-      <footer className="border-t px-5 py-10" style={{ borderColor: colors.line, backgroundColor: colors.ivory }}>
-        <div className="mx-auto grid max-w-7xl gap-8 md:grid-cols-[1fr_2fr_1fr]">
-          <Logo />
-          <div className="grid gap-4 text-sm sm:grid-cols-3" style={{ color: colors.muted }}>
+      {/* Footer */}
+      <footer className="border-t bg-white px-5 py-10" style={{ borderColor: colors.line }}>
+        <div className="mx-auto max-w-7xl">
+          <div className="grid gap-8 md:grid-cols-4">
             <div>
-              <h4 className="mb-3 font-black" style={{ color: colors.ink }}>
-                Banking
-              </h4>
-              <p>Accounts</p>
-              <p>Loans</p>
-              <p>Cards</p>
+              <Logo />
+              <p className="mt-4 text-sm" style={{ color: colors.muted }}>
+                National Bank of Malawi plc.
+              </p>
             </div>
             <div>
-              <h4 className="mb-3 font-black" style={{ color: colors.ink }}>
-                Digital
-              </h4>
-              <p>Mo626 Digital+</p>
-              <p>Mo626ice</p>
-              <p>BankNet360</p>
+              <h4 className="mb-3 font-semibold">Banking</h4>
+              <ul className="space-y-2 text-sm" style={{ color: colors.muted }}>
+                <li className="cursor-pointer transition-colors hover:text-[#0050B4]">Personal Banking</li>
+                <li className="cursor-pointer transition-colors hover:text-[#0050B4]">Business Banking</li>
+                <li className="cursor-pointer transition-colors hover:text-[#0050B4]">Wealth Management</li>
+                <li className="cursor-pointer transition-colors hover:text-[#0050B4]">Corporate Banking</li>
+              </ul>
             </div>
             <div>
-              <h4 className="mb-3 font-black" style={{ color: colors.ink }}>
-                Support
-              </h4>
-              <p>Contacts</p>
-              <p>Forms</p>
-              <p>Rates & Tariffs</p>
+              <h4 className="mb-3 font-semibold">Support</h4>
+              <ul className="space-y-2 text-sm" style={{ color: colors.muted }}>
+                <li className="cursor-pointer transition-colors hover:text-[#0050B4]">Contact Us</li>
+                <li className="cursor-pointer transition-colors hover:text-[#0050B4]">Security Centre</li>
+                <li className="cursor-pointer transition-colors hover:text-[#0050B4]">Find a Branch</li>
+                <li className="cursor-pointer transition-colors hover:text-[#0050B4]">FAQs</li>
+              </ul>
+            </div>
+            <div>
+              <h4 className="mb-3 font-semibold">Legal</h4>
+              <ul className="space-y-2 text-sm" style={{ color: colors.muted }}>
+                <li className="cursor-pointer transition-colors hover:text-[#0050B4]">Privacy & Security</li>
+                <li className="cursor-pointer transition-colors hover:text-[#0050B4]">Terms of Use</li>
+                <li className="cursor-pointer transition-colors hover:text-[#0050B4]">Accessibility</li>
+                <li className="cursor-pointer transition-colors hover:text-[#0050B4]">Legal Information</li>
+              </ul>
             </div>
           </div>
-          <p className="text-sm md:text-right" style={{ color: colors.muted }}>
-            National Bank of Malawi plc. Copyright 2026. All rights reserved.
-          </p>
+          <div className="mt-8 border-t pt-6 text-center text-xs" style={{ borderColor: colors.line, color: colors.muted }}>
+            <p>© {new Date().getFullYear()} National Bank of Malawi plc. All rights reserved.</p>
+          </div>
         </div>
       </footer>
 
+      {/* Login Modal */}
       {loginOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/45 p-4 backdrop-blur-sm" onClick={() => setLoginOpen(false)}>
-          <div className="w-full max-w-md bg-white p-6 shadow-2xl" onClick={(event) => event.stopPropagation()}>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm" onClick={() => setLoginOpen(false)}>
+          <div className="w-full max-w-md rounded-xl bg-white p-6 shadow-xl" onClick={(e) => e.stopPropagation()}>
             <div className="mb-6 flex items-center justify-between">
               <div>
-                <h2 className="text-2xl font-black">Log in</h2>
-                <p className="text-sm" style={{ color: colors.muted }}>
-                  Access your NBM digital services.
-                </p>
+                <h2 className="text-2xl font-bold">Sign In</h2>
+                <p className="text-sm" style={{ color: colors.muted }}>Access your accounts securely.</p>
               </div>
-              <button onClick={() => setLoginOpen(false)} className="p-2 hover:bg-[#f5f1ea]" aria-label="Close login">
+              <button onClick={() => setLoginOpen(false)} className="rounded p-1 transition-colors hover:bg-gray-100">
                 <X className="h-5 w-5" />
               </button>
             </div>
-
             <form onSubmit={handleLogin}>
-              <label className="mb-2 block text-sm font-black">Phone, email, or customer ID</label>
+              <label className="mb-1 block text-sm font-medium">Username or Customer ID</label>
               <input
                 value={credential}
-                onChange={(event) => setCredential(event.target.value)}
-                className="mb-4 w-full border px-4 py-3 outline-none focus:ring-2"
+                onChange={(e) => setCredential(e.target.value)}
+                className="mb-4 w-full rounded border px-4 py-2 outline-none transition-all focus:ring-2"
                 style={{ borderColor: colors.line, '--tw-ring-color': colors.oxblood } as React.CSSProperties}
-                placeholder="Enter your details"
+                placeholder="Enter your credentials"
                 required
               />
-              <button type="submit" className="w-full px-5 py-3.5 font-black text-white" style={{ backgroundColor: colors.oxblood }}>
+              <button
+                type="submit"
+                className="w-full rounded py-2.5 font-semibold text-white transition-all hover:opacity-90"
+                style={{ backgroundColor: colors.oxblood }}
+              >
                 Continue
               </button>
             </form>
